@@ -1,0 +1,189 @@
+'use client';
+import { CollectrLogo } from '@/components/ui/collectrLogo';
+import Image from 'next/image';
+import Link from 'next/link';
+import collections from '../../../assets/images/collections.jpg';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { register } from '@/assets/constants/api';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { Status } from '@/types/state';
+import { useState } from 'react';
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
+import { useRouter } from 'next/navigation';
+import collectrAPI from '@/api/CollectrAPI';
+
+const FormSchema = z.object({
+  firstname: z.string(),
+  lastname: z.string(),
+  email: z
+    .string()
+    .email({
+      message: 'Invalid email!',
+    })
+    .min(1, {
+      message: 'Provide a email.',
+    }),
+  password: z.string().min(1, {
+    message: 'Provide a password.',
+  }),
+});
+
+export default function SignUp() {
+  const { push } = useRouter();
+  const [status, setStatus] = useState<Status>(Status.IDLE);
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+    defaultValues: {},
+  });
+
+  async function onSubmit(values: z.infer<typeof FormSchema>) {
+    setStatus(Status.PENDING);
+
+    try {
+      const response = await collectrAPI.post(register, JSON.stringify(values));
+      setStatus(response.status == 201 ? Status.SUCCESS : Status.ERROR);
+    } catch (err) {
+      setStatus(Status.ERROR);
+    } finally {
+      setTimeout(() => {
+        if (status === Status.SUCCESS) {
+          setStatus(Status.IDLE);
+          push('/auth/sign-in');
+        }
+      }, 2500);
+    }
+  }
+
+  return (
+    <div className='h-screen '>
+      <div className='h-screen w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]'>
+        <div>
+          <CollectrLogo />
+          <div className='mx-24 mt-24 max-w-lg'>
+            <div>
+              <h1 className='text-2xl font-medium mb-12'>
+                Sign Up for Collectr
+              </h1>
+
+              <Form {...form}>
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className='grid gap-4'>
+                  <FormField
+                    control={form.control}
+                    name='firstname'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Firstname</FormLabel>
+                        <FormControl>
+                          <Input
+                            type='firstname'
+                            id='firstname'
+                            required={false}
+                            placeholder='John'
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name='lastname'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Lastname</FormLabel>
+                        <FormControl>
+                          <Input
+                            type='lastname'
+                            id='lastname'
+                            required={false}
+                            placeholder='Snow'
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name='email'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Email</FormLabel>
+                        <FormControl>
+                          <Input
+                            type='email'
+                            id='email'
+                            required={true}
+                            placeholder='your@email.com'
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name='password'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Password</FormLabel>
+                        <FormControl>
+                          <Input
+                            type='password'
+                            id='password'
+                            required={true}
+                            placeholder='correct horse battery staple'
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <Button
+                    type='submit'
+                    disabled={status === Status.PENDING}
+                    className='w-32 h-12 text-lg mt-10'>
+                    {status === Status.IDLE ? 'Sign up' : <LoadingSpinner />}
+                  </Button>
+                </form>
+              </Form>
+              <div className='mt-6 text-md'>
+                Already have an account?
+                <Link
+                  href={`/auth/sign-in`}
+                  className='underline ml-2'>
+                  Sign in
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <Image
+          src={collections}
+          alt='Image'
+          className='h-screen object-fit brightness-150 saturate-150'
+        />
+      </div>
+    </div>
+  );
+}
