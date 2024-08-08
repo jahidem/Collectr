@@ -37,4 +37,10 @@ public class ItemField {
     )
     private Item item;
 
+    @ManyToOne
+    @JoinColumn(
+            name = "item_template_id"
+    )
+    private ItemTemplate itemTemplate;
+
 }

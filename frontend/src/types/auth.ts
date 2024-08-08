@@ -1,9 +1,9 @@
 import { Dispatch, SetStateAction } from "react";
-import { Status } from "./state";
 
 
 export interface User {
   id: string;
+  email: string;
   role: string;
   firstname: string;
   lastname: string;
@@ -15,7 +15,6 @@ export interface User {
 export type authContextType = {
   authUser?: User;
   jwt: string | null;
-  loading: Status;
   getJwt: () => string | null;
   setAuthUser: Dispatch<SetStateAction<User | undefined>>;
   setAuth: (jwt: string | null) => void;

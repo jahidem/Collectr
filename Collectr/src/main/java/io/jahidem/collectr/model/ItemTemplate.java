@@ -14,19 +14,18 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Item {
+public class ItemTemplate{
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    private String name;
-    private String tags;
 
     @OneToMany(
-            mappedBy = "item",
+            mappedBy = "itemTemplate",
             cascade = CascadeType.ALL
     )
     private List<ItemField> itemFields;
-    @ManyToOne
+
+    @OneToOne
     @JoinColumn(
             name = "collection_id"
     )

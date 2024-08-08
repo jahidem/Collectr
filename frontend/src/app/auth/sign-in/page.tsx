@@ -24,7 +24,7 @@ import { useContext, useState } from 'react';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { useRouter } from 'next/navigation';
 import collectrAPI from '@/api/CollectrAPI';
-import { AuthContext } from '@/auth/authUserContext';
+import { AuthContext } from '@/providers/authUserContext';
 import { authContextType } from '@/types/auth';
 
 const FormSchema = z.object({
@@ -63,10 +63,8 @@ export default function SignIn() {
     } catch (err) {
       setStatus(Status.ERROR);
     } finally {
-      setTimeout(() => {
-        setStatus(Status.IDLE);
-        replace('/home');
-      }, 2500);
+      setStatus(Status.IDLE);
+      replace('/home');
     }
   }
 

@@ -24,8 +24,12 @@ import { useRouter } from 'next/navigation';
 import collectrAPI from '@/api/CollectrAPI';
 
 const FormSchema = z.object({
-  firstname: z.string(),
-  lastname: z.string(),
+  firstname: z.string() .min(1, {
+    message: 'Provide a firstname.',
+  }),
+  lastname: z.string().min(1, {
+    message: 'Provide a lastname.',
+  }),
   email: z
     .string()
     .email({
@@ -52,16 +56,12 @@ export default function SignUp() {
 
     try {
       const response = await collectrAPI.post(register, JSON.stringify(values));
-      setStatus(response.status == 201 ? Status.SUCCESS : Status.ERROR);
+      setStatus(response.status === 201 ? Status.SUCCESS : Status.ERROR);
     } catch (err) {
       setStatus(Status.ERROR);
     } finally {
-      setTimeout(() => {
-        if (status === Status.SUCCESS) {
-          setStatus(Status.IDLE);
-          push('/auth/sign-in');
-        }
-      }, 2500);
+      setStatus(Status.IDLE);
+      push('/auth/sign-in');
     }
   }
 
@@ -73,7 +73,7 @@ export default function SignUp() {
           <div className='mx-24 mt-24 max-w-lg'>
             <div>
               <h1 className='text-2xl font-medium mb-12'>
-                Sign Up for Collectr
+                Create account for Collectr
               </h1>
 
               <Form {...form}>
@@ -90,7 +90,7 @@ export default function SignUp() {
                           <Input
                             type='firstname'
                             id='firstname'
-                            required={false}
+                            required={true}
                             placeholder='John'
                             {...field}
                           />
@@ -109,7 +109,7 @@ export default function SignUp() {
                           <Input
                             type='lastname'
                             id='lastname'
-                            required={false}
+                            required={true}
                             placeholder='Snow'
                             {...field}
                           />

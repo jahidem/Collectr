@@ -1,28 +1,38 @@
 'use client';
+import collectrAPI from '@/api/CollectrAPI';
+import { userAuth } from '@/assets/constants/api';
 import { authContextType, User } from '@/types/auth';
-import { Status } from '@/types/state';
 import { useRouter } from 'next/navigation';
 import { createContext, FC, ReactNode, useEffect, useState } from 'react';
 
 export const AuthContext = createContext<authContextType | null>(null);
 
 const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const { push } = useRouter();
   const [authUser, setAuthUser] = useState<User>();
   const [jwt, setJwtState] = useState<string | null>(null);
-  const [loading, setLoading] = useState<Status>(Status.IDLE);
 
   useEffect(() => {
-    setLoading(Status.PENDING);
-    if (getJwt() == null) push('/auth/sign-in');
-    else push('/home');
-    setLoading(Status.SUCCESS);
+    getJwt();
   }, []);
+  useEffect(() => {
+    const getUser = async () => {
+      const response = await collectrAPI.post(userAuth);
+      if (response.status == 200) {
+        const data = response.data;
+        setAuthUser(data);
+        console.log(data);
+      }
+    };
+    if (jwt) getUser();
+  }, [jwt]);
 
   const setAuth = (newJwt: string | null) => {
     setJwtState(newJwt);
     if (newJwt != null) localStorage.setItem('jwt', newJwt);
-    else localStorage.removeItem('jwt');
+    else {
+      localStorage.removeItem('jwt');
+      setAuthUser(undefined);
+    }
   };
   const getJwt = () => {
     const localJwt = localStorage.getItem('jwt');
@@ -41,7 +51,6 @@ const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
         authUser,
         setAuthUser,
         setAuth,
-        loading
       }}>
       {children}
     </AuthContext.Provider>

@@ -25,14 +25,16 @@ public class Collection {
     private String description;
     private String imageId;
 
-    private Integer numberOfSelectField;
-    private  Integer numberOfIntegerField;
-    private  Integer numberOfStringField;
-    private  Integer numberOfBooleanField;
-    private  Integer numberOfMultilineStringField;
+
+    @OneToOne(
+            mappedBy = "collection",
+            cascade = CascadeType.ALL
+    )
+    private ItemTemplate itemTemplate;
 
     @OneToMany(
-            mappedBy = "collection"
+            mappedBy = "collection",
+            cascade = CascadeType.ALL
     )
     private List<Item> items;
 

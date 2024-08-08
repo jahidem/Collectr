@@ -3,10 +3,13 @@ package io.jahidem.collectr.controller;
 import io.jahidem.collectr.dto.AuthenticationResponse;
 import io.jahidem.collectr.dto.LoginRequest;
 import io.jahidem.collectr.dto.RegisterRequest;
+import io.jahidem.collectr.model.User;
 import io.jahidem.collectr.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
 
 @RestController
 @RequestMapping("/auth")

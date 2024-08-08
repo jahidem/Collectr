@@ -39,9 +39,8 @@ public class SecurityConfiguration {
                     auth
                             .requestMatchers("/auth/**").permitAll()
                             .requestMatchers("/admin/**").hasRole(ADMIN.name())
-                                .requestMatchers(POST, "/user/**").hasAnyRole(ADMIN.name(), USER.name())
-                                .requestMatchers(PUT, "/user/**").hasAnyRole(ADMIN.name(), USER.name())
-                                .requestMatchers(DELETE, "/user/**").hasAnyRole(ADMIN.name(), USER.name())
+                            .requestMatchers("/api/**").hasAnyRole(ADMIN.name(), USER.name())
+                            .requestMatchers(GET, "/api/**").permitAll()
                             .anyRequest().authenticated()
 
                 )

@@ -12,6 +12,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
+
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
@@ -36,7 +38,10 @@ public class AuthenticationService {
                 .build();
     }
 
-
+    public User getAuth(String email){
+        var user = userRepository.findByEmail(email).orElseThrow();
+        return user;
+    }
     public AuthenticationResponse login(LoginRequest loginRequest) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())

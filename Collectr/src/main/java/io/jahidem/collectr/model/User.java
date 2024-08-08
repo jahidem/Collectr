@@ -41,13 +41,14 @@ public class User implements UserDetails {
     private UserSetting setting;
 
     @OneToMany(
-            mappedBy = "user"
+            mappedBy = "user",
+            fetch = FetchType.EAGER
     )
     private List<io.jahidem.collectr.model.Collection> collections;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+        return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
     }
 
     @Override
