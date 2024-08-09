@@ -23,6 +23,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { collections as collectionsApi } from '@/assets/constants/api';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
@@ -36,11 +37,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { Status } from '@/types/state';
 import collectrAPI from '@/api/CollectrAPI';
 import { collections } from '@/assets/constants/api';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
+import { ModelContext } from '@/providers/modelProvider';
+import { ModelContextType } from '@/types/model';
 
 const validationSchema = z.object({
   title: z.string().min(1, {
@@ -50,9 +53,9 @@ const validationSchema = z.object({
   imageId: z.string(),
   itemFields: z.array(
     z.object({
-      fieldName: z.string().min(1, { message: '' }),
+      fieldName: z.string().min(1, { message: 'provide field name.' }),
       itemFieldType: z.string().min(1, {
-        message: '',
+        message: 'provide a field type.',
       }),
     })
   ),
@@ -62,10 +65,19 @@ type FormValues = z.infer<typeof validationSchema>;
 
 export default function NewCollection() {
   const [status, setStatus] = useState<Status>(Status.IDLE);
-
+  const [open, setOpen] = useState(false);
+  const { fetchCollections, user } = useContext(
+    ModelContext
+  ) as ModelContextType;
+  const defaultValues: FormValues = {
+    imageId: '',
+    title: '',
+    description: '',
+    itemFields: [],
+  };
   const form = useForm<FormValues>({
     resolver: zodResolver(validationSchema),
-    defaultValues: {},
+    defaultValues: defaultValues,
   });
 
   const { fields, append } = useFieldArray({
@@ -74,7 +86,7 @@ export default function NewCollection() {
   });
 
   async function onSubmit(values: FormValues) {
-    console.log(values)
+    console.log(values);
     setStatus(Status.PENDING);
 
     try {
@@ -88,14 +100,19 @@ export default function NewCollection() {
     } catch (err) {
       setStatus(Status.ERROR);
     } finally {
+      fetchCollections(`${collectionsApi}/user/${user?.id}`);
       setStatus(Status.IDLE);
+      form.reset(defaultValues);
+      setOpen(false);
     }
   }
 
   return (
-    <Dialog>
+    <Dialog
+      open={open}
+      onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>Create Collection</Button>
+        <Button>Create</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -201,7 +218,6 @@ export default function NewCollection() {
                     <div className='flex justify-around'>
                       <FormField
                         control={form.control}
-                        key={index}
                         name={`itemFields.${index}.fieldName`}
                         render={({ field }) => (
                           <FormItem>
@@ -209,13 +225,12 @@ export default function NewCollection() {
                             <FormControl>
                               <Input {...field} />
                             </FormControl>
-                            <FormMessage className='text-red-500 capitalize' />
+                            <FormMessage />
                           </FormItem>
                         )}
                       />
                       <FormField
                         control={form.control}
-                        key={index + 1}
                         name={`itemFields.${index}.itemFieldType`}
                         render={({ field }) => (
                           <FormItem>
@@ -228,9 +243,9 @@ export default function NewCollection() {
                                   <SelectValue placeholder='Select Type' />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  <SelectItem value='SELECT_FIELD'>
+                                  {/* <SelectItem value='SELECT_FIELD'>
                                     Option Field
-                                  </SelectItem>
+                                  </SelectItem> */}
                                   <SelectItem value='INTEGER_FIELD'>
                                     Integer Field
                                   </SelectItem>
@@ -246,7 +261,7 @@ export default function NewCollection() {
                                 </SelectContent>
                               </Select>
                             </FormControl>
-                            <FormMessage className='text-red-500 capitalize' />
+                            <FormMessage />
                           </FormItem>
                         )}
                       />
@@ -258,12 +273,15 @@ export default function NewCollection() {
 
             <div className='flex justify-between'>
               <DialogClose asChild>
-                <Button variant='secondary'>Cancel</Button>
+                <Button
+                  variant='secondary'
+                  onClick={() => form.reset(defaultValues)}>
+                  Cancel
+                </Button>
               </DialogClose>
               <Button
                 type='submit'
-                disabled={status === Status.PENDING}
-                >
+                disabled={status === Status.PENDING}>
                 {status === Status.IDLE ? 'Submit' : <LoadingSpinner />}
               </Button>
             </div>

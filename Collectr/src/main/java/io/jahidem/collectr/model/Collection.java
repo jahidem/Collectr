@@ -1,5 +1,6 @@
 package io.jahidem.collectr.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jdk.jfr.Relational;
 import lombok.AllArgsConstructor;
@@ -32,22 +33,15 @@ public class Collection {
     )
     private ItemTemplate itemTemplate;
 
-    @OneToMany(
-            mappedBy = "collection",
-            cascade = CascadeType.ALL
-    )
-    private List<Item> items;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "catagory_id"
     )
     private CollectionCatagory catagory;
 
-    @ManyToOne
-    @JoinColumn(
-            name = "user_id"
-    )
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
     private User user;
 
 }

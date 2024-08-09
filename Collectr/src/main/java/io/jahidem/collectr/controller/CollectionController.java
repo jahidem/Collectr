@@ -13,8 +13,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
+import java.security.Principal;
 import java.util.List;
+import java.util.UUID;
+
 
 @Slf4j
 @RestController
@@ -24,11 +26,30 @@ import java.util.List;
 public class CollectionController {
     private  final CollectionService collectionService;
 
-    @PostMapping("")
+    @PostMapping()
     @ResponseStatus(code = HttpStatus.CREATED)
-    public Collection addCollection(@RequestBody CreateCollectionRequest createCollectionRequest) {
-        return collectionService.addCollection(createCollectionRequest);
+    public Collection addCollection(@RequestBody CreateCollectionRequest createCollectionRequest,
+                                    Principal principal) {
+        return collectionService.addCollection(createCollectionRequest, principal.getName());
 
+    }
+
+
+    @GetMapping
+    @ResponseStatus(code=HttpStatus.OK)
+    public List<Collection> getCollections(Principal principal) {
+        return collectionService.getCollections(principal.getName());
+    }
+
+    @DeleteMapping("/collection/{id}")
+    @ResponseStatus(code = HttpStatus.OK)
+    public void deleteCollection(@PathVariable("id") UUID id) {
+        collectionService.deleteCollection(id);
+    }
+    @GetMapping("/user/{userId}")
+    @ResponseStatus(code = HttpStatus.OK)
+    public  List<Collection> getCollection(@PathVariable("userId") UUID userId) {
+        return collectionService.getCollections(userId);
     }
 
 }

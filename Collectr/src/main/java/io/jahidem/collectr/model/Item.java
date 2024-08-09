@@ -1,5 +1,6 @@
 package io.jahidem.collectr.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,12 +22,8 @@ public class Item {
     private String name;
     private String tags;
 
-    @OneToMany(
-            mappedBy = "item",
-            cascade = CascadeType.ALL
-    )
-    private List<ItemField> itemFields;
-    @ManyToOne
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "collection_id"
     )

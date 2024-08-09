@@ -1,5 +1,6 @@
 'use client';
 import Header from '@/components/side-bar/header';
+import ModelProvider from '@/providers/modelProvider';
 
 export default function Landing({
   children,
@@ -9,7 +10,7 @@ export default function Landing({
   return (
     <>
       <Header />
-      {children}
+      <ModelProvider>{children}</ModelProvider>
     </>
   );
 }

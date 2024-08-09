@@ -31,17 +31,24 @@ export default function Header() {
           <CollectrLogo className='text-xl' />
           <span className='sr-only'>Acme Inc</span>
         </Link>
-        {linkItems.map((item) => (
-          <Link
-            key={item.name}
-            href={item.href}
-            className={cn(
-              'text-muted-foreground transition-colors hover:text-foreground',
-              item.href == pathname ? 'text-foreground' : ''
-            )}>
-            {item.name}
-          </Link>
-        ))}
+        {linkItems
+          .filter((item) => {
+            if (!authUser && (item.name == 'Profile' || item.name == 'Admin'))
+              return false;
+            if (authUser?.role != 'ADMIN' && item.name == 'Admin') return false;
+            return true;
+          })
+          .map((item) => (
+            <Link
+              key={item.name}
+              href={item.href}
+              className={cn(
+                'text-muted-foreground transition-colors hover:text-foreground',
+                item.href == pathname ? 'text-foreground' : ''
+              )}>
+              {item.name}
+            </Link>
+          ))}
       </nav>
       <Sheet>
         <SheetTrigger asChild>
