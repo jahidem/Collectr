@@ -1,6 +1,9 @@
 package io.jahidem.collectr.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import jdk.jfr.Relational;
 import lombok.AllArgsConstructor;
@@ -16,6 +19,7 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Collection {
 
     @Id
@@ -29,9 +33,12 @@ public class Collection {
 
     @OneToOne(
             mappedBy = "collection",
-            cascade = CascadeType.ALL
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
     )
     private ItemTemplate itemTemplate;
+
 
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -43,5 +50,10 @@ public class Collection {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "collection",
+    fetch = FetchType.LAZY)
+    List<Item> items;
 
 }

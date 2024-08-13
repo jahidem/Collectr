@@ -1,6 +1,9 @@
 package io.jahidem.collectr.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,6 +18,8 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
 public class CollectionCatagory {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -22,8 +27,10 @@ public class CollectionCatagory {
 
     private String name;
 
+    @JsonIgnore
     @OneToMany(
-            mappedBy = "catagory"
+            mappedBy = "catagory",
+            fetch = FetchType.LAZY
     )
     private List<Collection> collections;
 }

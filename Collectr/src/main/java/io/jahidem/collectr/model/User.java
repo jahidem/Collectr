@@ -1,6 +1,9 @@
 package io.jahidem.collectr.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,6 +23,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @Entity
 @Table(name ="app_user")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -39,6 +44,7 @@ public class User implements UserDetails {
             cascade = CascadeType.ALL
     )
     private UserSetting setting;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

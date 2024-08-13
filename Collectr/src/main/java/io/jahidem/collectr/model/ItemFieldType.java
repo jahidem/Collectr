@@ -5,5 +5,6 @@ public enum ItemFieldType {
     INTEGER_FIELD,
     STRING_FIELD,
     MULTILINE_STRING_FIELD,
-    BOOLEAN_FIELD
+    BOOLEAN_FIELD,
+    DATE_FIELD,
 }

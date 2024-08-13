@@ -1,12 +1,7 @@
 package io.jahidem.collectr.controller;
 
 import io.jahidem.collectr.dto.CreateCollectionRequest;
-import io.jahidem.collectr.dto.ItemFieldDto;
 import io.jahidem.collectr.model.Collection;
-import io.jahidem.collectr.model.ItemField;
-import io.jahidem.collectr.model.ItemFieldType;
-import io.jahidem.collectr.model.ItemTemplate;
-import io.jahidem.collectr.service.AuthenticationService;
 import io.jahidem.collectr.service.CollectionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,9 +41,16 @@ public class CollectionController {
     public void deleteCollection(@PathVariable("id") UUID id) {
         collectionService.deleteCollection(id);
     }
+
+    @GetMapping("/collection/{id}")
+    @ResponseStatus(code = HttpStatus.OK)
+    public Collection getCollection(@PathVariable("id") UUID id) {
+        return  collectionService.getCollection(id);
+    }
+
     @GetMapping("/user/{userId}")
     @ResponseStatus(code = HttpStatus.OK)
-    public  List<Collection> getCollection(@PathVariable("userId") UUID userId) {
+    public  List<Collection> getCollections(@PathVariable("userId") UUID userId) {
         return collectionService.getCollections(userId);
     }
 

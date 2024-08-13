@@ -18,7 +18,6 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Collection } from '@/types/collection';
-import NewCollection from './NewCollection';
 import { Button } from '@/components/ui/button';
 import React, { useContext, useEffect } from 'react';
 import { ModelContext } from '@/providers/modelProvider';
@@ -28,6 +27,7 @@ import { AuthContext } from '@/providers/authUserContext';
 import { authContextType } from '@/types/auth';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useRouter } from 'next/navigation';
+import NewItem from './NewItem';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -50,18 +50,18 @@ export function DataTable<TData, TValue>({
       sorting,
     },
   });
-  const { deleteCollections, user } = useContext(
+  const { deleteCollections, collection } = useContext(
     ModelContext
   ) as ModelContextType;
   const { authUser } = useContext(AuthContext) as authContextType;
   return (
     <div>
-      {authUser?.id == user?.id && (
+      {authUser?.id == collection?.user.id && (
         <div className='flex justify-between'>
-          <h4 className='text-xl font-medium'>Collection List</h4>
+          <h4 className='text-xl font-medium'>Item List</h4>
 
           <div className='flex gap-x-6 mb-6'>
-            <NewCollection />
+            <NewItem />
             <Button
               disabled={table.getSelectedRowModel().rows.length == 0}
               onClick={async () => {
@@ -104,6 +104,11 @@ export function DataTable<TData, TValue>({
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
+                  // className='cursor-pointer'
+                  // onClick={() => {
+                  //   const collection = row.original as Collection;
+                  //   route.push(`/collection/${collection.id}`);
+                  // }}
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}>
                   {row.getVisibleCells().map((cell) => (

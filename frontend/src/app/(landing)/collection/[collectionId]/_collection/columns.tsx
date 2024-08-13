@@ -1,12 +1,12 @@
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Collection } from '@/types/collection';
+import { Item } from '@/types/item';
 import { ColumnDef } from '@tanstack/react-table';
 import { ArrowUpDown, ImageIcon } from 'lucide-react';
 import Image from 'next/image';
-import Link from 'next/link';
 
-export const columns: ColumnDef<Collection>[] = [
+export const columns: ColumnDef<Item>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -31,21 +31,6 @@ export const columns: ColumnDef<Collection>[] = [
   },
 
   {
-    accessorKey: 'imageUrl',
-    header: 'Cover Image',
-    cell: ({ row }) =>
-      row.original.imageId ? (
-        <Image
-          height={36}
-          width={36}
-          src={`https://ucarecdn.com/${row.original.imageId}/`}
-          alt={'collection image'}
-        />
-      ) : (
-        <ImageIcon className='h-10 w-10' />
-      ),
-  },
-  {
     accessorKey: 'id',
     header: ({ column }) => {
       return (
@@ -57,35 +42,41 @@ export const columns: ColumnDef<Collection>[] = [
         </Button>
       );
     },
-    cell: ({ row }) => (
-      <Link
-        className='cursor-pointer hover:underline'
-        href={`/collection/${row.original.id}`}>
-        {row.original.id}
-      </Link>
-    ),
   },
   {
-    accessorKey: 'title',
+    accessorKey: 'name',
     header: ({ column }) => {
       return (
         <Button
           variant='ghost'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-          Title
+          Name
           <ArrowUpDown className='ml-2 h-4 w-4' />
         </Button>
       );
     },
   },
   {
-    accessorKey: 'description',
+    accessorKey: 'tags',
     header: ({ column }) => {
       return (
         <Button
           variant='ghost'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-          Description
+          Tags
+          <ArrowUpDown className='ml-2 h-4 w-4' />
+        </Button>
+      );
+    },
+  },
+  {
+    accessorKey: 'collectionName',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant='ghost'
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+          Collection
           <ArrowUpDown className='ml-2 h-4 w-4' />
         </Button>
       );

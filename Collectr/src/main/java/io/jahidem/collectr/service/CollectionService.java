@@ -3,10 +3,7 @@ package io.jahidem.collectr.service;
 import io.jahidem.collectr.dto.CreateCollectionRequest;
 import io.jahidem.collectr.dto.ItemFieldDto;
 import io.jahidem.collectr.model.*;
-import io.jahidem.collectr.repository.AppUserRepository;
-import io.jahidem.collectr.repository.CollectionRepository;
-import io.jahidem.collectr.repository.ItemFieldRepository;
-import io.jahidem.collectr.repository.ItemTemplateRepository;
+import io.jahidem.collectr.repository.*;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +22,7 @@ public class CollectionService {
     private final CollectionRepository collectionRepository;
     private final ItemTemplateRepository itemTemplateRepository;
     private final AppUserRepository appUserRepository;
+    private final CollectionCatagoryRepository  collectionCatagoryRepository;
 
     public Collection addCollection(CreateCollectionRequest createCollectionRequest, String email) {
         ItemTemplate itemTemplate = new ItemTemplate();
@@ -38,7 +36,7 @@ public class CollectionService {
                             .itemFieldType(ItemFieldType.valueOf(itemTemplateDto.getItemFieldType()))
                             .build());
         }
-        itemFields = itemFieldRepository.saveAll(itemFields);
+        itemFieldRepository.saveAll(itemFields);
 
 
         User user = appUserRepository.findByEmail(email).orElseThrow();
@@ -46,10 +44,14 @@ public class CollectionService {
                 .user(user)
                 .title(createCollectionRequest.getTitle())
                 .description(createCollectionRequest.getDescription())
+                .catagory(collectionCatagoryRepository
+                        .findById(createCollectionRequest
+                                .getCollectionCatagoryId()).orElse(null))
                 .imageId(createCollectionRequest.getImageId())
-                .itemTemplate(itemTemplate)
                 .build();
         collectionRepository.save(collection);
+        itemTemplate.setCollection(collection);
+        itemTemplateRepository.save(itemTemplate);
         return  collection;
 }
 
@@ -64,5 +66,9 @@ public class CollectionService {
 
     public void deleteCollection(UUID id) {
         collectionRepository.deleteById(id);
+    }
+
+    public Collection getCollection(UUID id) {
+        return collectionRepository.findById(id).orElseThrow();
     }
 }

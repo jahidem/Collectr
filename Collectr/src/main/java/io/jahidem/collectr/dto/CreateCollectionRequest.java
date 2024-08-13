@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor
@@ -15,6 +16,7 @@ public class CreateCollectionRequest {
     private String title;
     private String description;
     private String imageId;
+    private UUID collectionCatagoryId;
 
     List<ItemFieldDto> itemFields;
 }

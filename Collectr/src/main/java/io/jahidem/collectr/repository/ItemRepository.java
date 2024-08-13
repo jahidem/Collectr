@@ -1,10 +1,13 @@
 package io.jahidem.collectr.repository;
 
+import io.jahidem.collectr.model.Item;
 import io.jahidem.collectr.model.ItemTemplate;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 import java.util.UUID;
 
-public interface ItemTemplateRepository  extends JpaRepository<ItemTemplate, UUID> {
+public interface ItemRepository extends JpaRepository<Item, UUID> {
+    public List<Item> findAllByCollectionId(UUID collectionId);
 }
+

@@ -1,10 +1,6 @@
-import { Dispatch, SetStateAction } from "react";
+import { User } from "./auth";
 
-export type CollectionUser = {
-  id: string;
-  firstname: string;
-  lastname: string;
-}
+
 
 export type Collection = {
   id: string;
@@ -12,7 +8,8 @@ export type Collection = {
   description: string;
   imageId: string;
   category: CollectionCatagory;
-  user: CollectionUser;
+  itemTemplate: ItemTemplate;
+  user: User;
 }
 
 
@@ -21,3 +18,19 @@ export type CollectionCatagory = {
   name: string;
 }
 
+export type ItemTemplate = {
+  id: string,
+  collection: string;
+  itemFields: ItemField[];
+
+}
+
+export type ItemField = {
+  id: string;
+  fieldName: string;
+  itemFieldType: string;
+  integerField: number | null;
+  stringField: string | null;
+  multilineStringField: string | null;
+  booleanField: boolean | null;
+}

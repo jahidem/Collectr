@@ -23,7 +23,10 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { collections as collectionsApi } from '@/assets/constants/api';
+import {
+  collectionCatagories,
+  collections as collectionsApi,
+} from '@/assets/constants/api';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
@@ -37,19 +40,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Status } from '@/types/state';
 import collectrAPI from '@/api/CollectrAPI';
 import { collections } from '@/assets/constants/api';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { ModelContext } from '@/providers/modelProvider';
 import { ModelContextType } from '@/types/model';
+import { CollectionCatagory } from '@/types/collection';
 
 const validationSchema = z.object({
   title: z.string().min(1, {
     message: 'provide a title.',
   }),
   description: z.string(),
+  collectionCatagoryId: z.string().min(1, {
+    message: 'provide a catagory.',
+  }),
   imageId: z.string(),
   itemFields: z.array(
     z.object({
@@ -66,6 +73,12 @@ type FormValues = z.infer<typeof validationSchema>;
 export default function NewCollection() {
   const [status, setStatus] = useState<Status>(Status.IDLE);
   const [open, setOpen] = useState(false);
+  const [catagories, setCatagories] = useState<CollectionCatagory[]>([]);
+  useEffect(() => {
+    collectrAPI
+      .get(collectionCatagories)
+      .then((res) => setCatagories(res.data));
+  }, []);
   const { fetchCollections, user } = useContext(
     ModelContext
   ) as ModelContextType;
@@ -74,6 +87,7 @@ export default function NewCollection() {
     title: '',
     description: '',
     itemFields: [],
+    collectionCatagoryId: '',
   };
   const form = useForm<FormValues>({
     resolver: zodResolver(validationSchema),
@@ -114,7 +128,7 @@ export default function NewCollection() {
       <DialogTrigger asChild>
         <Button>Create</Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className='sm:max-w-[560px] overflow-auto'>
         <DialogHeader>
           <DialogTitle>New Collection</DialogTitle>
           <DialogDescription>
@@ -125,7 +139,7 @@ export default function NewCollection() {
           <form
             action=''
             onSubmit={form.handleSubmit(onSubmit)}
-            className='flex-1 max-w-md space-y-5'>
+            className='flex-1 space-y-5'>
             <FormField
               name='title'
               control={form.control}
@@ -156,6 +170,34 @@ export default function NewCollection() {
                       className='mt-3'
                       {...field}
                     />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name='collectionCatagoryId'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Catagory</FormLabel>
+                  <FormControl>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}>
+                      <SelectTrigger className='w-[180px]'>
+                        <SelectValue placeholder='Select Type' />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {catagories.map((catagory) => (
+                          <SelectItem
+                            key={catagory.id}
+                            value={catagory.id}>
+                            {catagory.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -243,9 +285,9 @@ export default function NewCollection() {
                                   <SelectValue placeholder='Select Type' />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  {/* <SelectItem value='SELECT_FIELD'>
-                                    Option Field
-                                  </SelectItem> */}
+                                  <SelectItem value='DATE_FIELD'>
+                                    Date Field
+                                  </SelectItem>
                                   <SelectItem value='INTEGER_FIELD'>
                                     Integer Field
                                   </SelectItem>

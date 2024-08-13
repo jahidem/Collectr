@@ -12,7 +12,6 @@ import { ModelContext } from '@/providers/modelProvider';
 import { ModelContextType } from '@/types/model';
 import { CollectrLogo } from '@/components/ui/collectrLogo';
 import { useParams } from 'next/navigation';
-import { ScrollArea } from '@/components/ui/scroll-area';
 
 export default function Profile() {
   const { user, fetchUser, collections, fetchCollections } = useContext(
@@ -44,7 +43,11 @@ export default function Profile() {
       <Separator className='my-4' />
         <div className='container mx-auto'>
           <DataTable
-            columns={authUser ? columns : columns.slice(1)}
+          columns={
+            authUser && authUser.id == userId
+              ? columns
+              : columns.slice(1)
+          }
             data={collections}
           />
         </div>
