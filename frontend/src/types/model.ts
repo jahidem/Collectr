@@ -23,12 +23,16 @@ export type ModelContextType = {
   setUser: Dispatch<SetStateAction<User | undefined>>;
   fetchUser: (api: string) => void
 
+  item: Item | undefined;
+  fetchItem: (api: string) => void,
   deleteItems: (itemIds: string[],
     itemApi: string) => void;
   items: Item[];
   fetchItems: (api: string) => void
   fetchLatestItems: (api: string) => void
   latestItems: LatestItem[];
+  likeItem: (api: string, userId: string, itemId: string) => Promise<void>;
+  unlikeItem: (api: string) => Promise<void>,
 
   tags: ItemTag[];
   fetchTags: (api: string) => void

@@ -11,6 +11,7 @@ export const items = `${logged}/items`;
 export const itemTemplates = `${logged}/itemTemplates`
 export const collectionCatagories = `${logged}/collectionCatagories`
 export const itemTags = `${logged}/itemTags`
+export const likes = `${logged}/likes`
 
 export const auth = `/auth`;
 export const register = `${auth}/register`;

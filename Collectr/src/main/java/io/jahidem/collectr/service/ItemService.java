@@ -26,7 +26,7 @@ public class ItemService {
                 item -> ItemResponseDto.builder()
                         .id(item.getId())
                         .name(item.getName())
-                        .itemTags( item.getItemTags().stream().map(
+                        .itemTags(item.getItemTags().stream().map(
                                 itemTag -> TagDto.builder()
                                         .id(itemTag.getId())
                                         .name(itemTag.getName())
@@ -40,7 +40,7 @@ public class ItemService {
     public void createItem(ItemDto itemDto) {
 
         List<ItemTag> itemTags = itemDto.getTags().stream()
-                .map(tag  -> itemTagRepository.findById(tag.getId()).orElse(null))
+                .map(tag -> itemTagRepository.findById(tag.getId()).orElse(null))
                 .collect(Collectors.toList());
 
         Item item = Item.builder()
@@ -52,10 +52,17 @@ public class ItemService {
 
         List<ItemField> itemFields = itemDto.getItemFields().stream()
                 .map(field -> ItemField.builder()
-                        .fieldName(field.getFieldValue())
+                        .fieldValue(field.getFieldValue())
                         .item(savedItem)
                         .build())
                 .collect(Collectors.toList());
+
+        List<ItemField> templateFields = savedItem.getCollection().getItemTemplate().getItemFields();
+        for(int i=0;i<Math.min( templateFields.size(), templateFields.size());i++) {
+            ItemField itemField = itemFields.get(i);
+            itemField.setFieldName(templateFields.get(i).getFieldName());
+            itemField.setItemFieldType(templateFields.get(i).getItemFieldType());
+        }
         itemFieldRepository.saveAll(itemFields);
     }
 
@@ -63,34 +70,51 @@ public class ItemService {
         itemRepository.deleteById(id);
     }
 
-    public List<LatestItemDto> findLatest(){
+    public List<LatestItemDto> findLatest() {
         List<Item> items = itemRepository.findAllByOrderByCreatedAtDesc();
-        return items.stream().map(item ->{
-            User user = item.getCollection().getUser();
-            Collection collection = item.getCollection();
+        return items.stream().map(item -> {
+                    User user = item.getCollection().getUser();
+                    Collection collection = item.getCollection();
 
-            return LatestItemDto.builder()
-                    .id(item.getId())
-                    .name(item.getName())
-                    .collection(
-                            CollectionDto.builder()
-                            .id(collection.getId())
-                            .title(collection.getTitle())
-                            .build())
-                    .user(
-                            UserDto.builder()
-                                    .id(user.getId())
-                                    .email(user.getEmail())
-                                    .build()
-                    )
-                    .itemTags( item.getItemTags().stream().map(
-                            itemTag -> TagDto.builder()
-                                    .id(itemTag.getId())
-                                    .name(itemTag.getName())
-                                    .build()
-                    ).collect(Collectors.toList()))
-                    .createdAt(item.getCreatedAt())
-                    .build();}
+                    return LatestItemDto.builder()
+                            .id(item.getId())
+                            .name(item.getName())
+                            .collection(
+                                    CollectionDto.builder()
+                                            .id(collection.getId())
+                                            .title(collection.getTitle())
+                                            .build())
+                            .user(
+                                    UserDto.builder()
+                                            .id(user.getId())
+                                            .email(user.getEmail())
+                                            .build()
+                            )
+                            .itemTags(item.getItemTags().stream().map(
+                                    itemTag -> TagDto.builder()
+                                            .id(itemTag.getId())
+                                            .name(itemTag.getName())
+                                            .build()
+                            ).collect(Collectors.toList()))
+                            .createdAt(item.getCreatedAt())
+                            .build();
+                }
         ).collect(Collectors.toList());
+    }
+
+    public ItemResponseDto getItem(UUID id) {
+        Item item = itemRepository.findById(id).orElse(null);
+        return ItemResponseDto.builder()
+                .id(item.getId())
+                .name(item.getName())
+                .itemTags(item.getItemTags().stream().map(
+                        itemTag -> TagDto.builder()
+                                .id(itemTag.getId())
+                                .name(itemTag.getName())
+                                .build()
+                ).collect(Collectors.toList()))
+                .itemFields(item.getItemFields())
+                .likes(item.getLikes())
+                .build();
     }
 }

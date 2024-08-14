@@ -44,7 +44,7 @@ export default function Home() {
         />
         <div className='mt-16'>
           <h4 className='text-lg font-medium mb-6'>Largest Collections</h4>
-          <div className='flex flex-wrap gap-6 justify-center'>
+          <div className='flex flex-wrap gap-6'>
             {top5.map((collection, index) => (
               <Card
                 onClick={() => router.push(`collection/${collection.id}`)}

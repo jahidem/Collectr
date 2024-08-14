@@ -6,6 +6,7 @@ import { Item } from '@/types/item';
 import { ColumnDef } from '@tanstack/react-table';
 import { ArrowUpDown, ImageIcon } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 export const columns: ColumnDef<Item>[] = [
   {
@@ -43,6 +44,13 @@ export const columns: ColumnDef<Item>[] = [
         </Button>
       );
     },
+    cell: ({ row }) => (
+      <Link
+        href={`/item/${row.original.id}`}
+        className='hover:underline'>
+        {row.original.id}
+      </Link>
+    ),
   },
   {
     accessorKey: 'name',
@@ -81,5 +89,4 @@ export const columns: ColumnDef<Item>[] = [
       </div>
     ),
   },
-
 ];

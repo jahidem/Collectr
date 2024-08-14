@@ -43,6 +43,12 @@ public class ItemController {
         itemService.deleteById(id);
     }
 
+    @GetMapping("/item/{id}")
+    @ResponseStatus(code = HttpStatus.OK)
+    public ItemResponseDto getItem(@PathVariable("id") UUID id){
+        return itemService.getItem(id);
+    }
+
 }
 
 

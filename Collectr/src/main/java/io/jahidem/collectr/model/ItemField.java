@@ -25,11 +25,8 @@ public class ItemField {
     private String fieldName;
     @Enumerated(EnumType.STRING)
     private ItemFieldType itemFieldType;
+    private String fieldValue;
 
-    private Integer integerField;
-    private String stringField;
-    private String multilineStringField;
-    private Boolean booleanField;
     @OneToOne(
             mappedBy = "itemField",
             cascade = CascadeType.ALL,

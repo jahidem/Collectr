@@ -9,7 +9,14 @@ import Link from 'next/link';
 export const columns: ColumnDef<LatestItem>[] = [
   {
     accessorKey: 'id',
-    header: "ID"
+    header: 'ID',
+    cell: ({ row }) => (
+      <Link
+        href={`/item/${row.original.id}`}
+        className='hover:underline'>
+        {row.original.id}
+      </Link>
+    ),
   },
   {
     accessorKey: 'name',
@@ -66,7 +73,7 @@ export const columns: ColumnDef<LatestItem>[] = [
   },
   {
     accessorKey: 'itemTags',
-    header: "Tags",
+    header: 'Tags',
     cell: ({ row }) => (
       <div className='flex flex-wrap gap-4'>
         {row.original.itemTags.map((item) => (

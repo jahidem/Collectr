@@ -7,8 +7,13 @@ export type Item = {
   itemTags: ItemTag[];
 
   itemFields: ItemField[]
+  likes: Like[]
 }
 
+export type Like = {
+  id: string;
+  user: User;
+}
 export type LatestItem = {
   id: string;
   name: string;

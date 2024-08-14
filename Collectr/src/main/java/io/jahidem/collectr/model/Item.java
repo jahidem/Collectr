@@ -54,4 +54,12 @@ public class Item {
             updatable = false
     )
     private LocalDateTime createdAt;
+
+    @Nullable
+    @JsonIgnore
+    @OneToMany(mappedBy = "item",
+            cascade = CascadeType.REMOVE,
+            fetch = FetchType.EAGER,
+        orphanRemoval = true)
+    private List<Like> likes;
 }

@@ -12,6 +12,7 @@ const ModelProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [collections, setCollections] = useState<Collection[]>([]);
   const [collection, setCollection] = useState<Collection>();
 
+  const [item, setItem] = useState<Item>();
   const [items, setItems] = useState<Item[]>([]);
   const [latestItems, setLatestItems] = useState<LatestItem[]>([]);
   const [user, setUser] = useState<User>();
@@ -32,6 +33,12 @@ const ModelProvider: FC<{ children: ReactNode }> = ({ children }) => {
     console.log(response.data);
   };
 
+  const fetchItem = async (api: string) => {
+    const response = await collectrAPI.get(api);
+    if (response.status == 200) setItem(response.data);
+    console.log(response.data);
+  };
+
   const fetchItems = async (api: string) => {
     const response = await collectrAPI.get(api);
     if (response.status == 200) setItems(response.data);
@@ -42,6 +49,17 @@ const ModelProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const response = await collectrAPI.get(api);
     if (response.status == 200) setLatestItems(response.data);
     console.log(response.data);
+  };
+
+  const likeItem = async (api: string, userId: string, itemId: string) => {
+    await collectrAPI.post(
+      api,
+      JSON.stringify({ userId: userId, itemId: itemId })
+    );
+  };
+
+  const unlikeItem = async (api: string) => {
+    await collectrAPI.delete(api);
   };
 
   const fetchTags = async (api: string) => {
@@ -91,11 +109,15 @@ const ModelProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setCollections,
         fetchCollections,
 
+        fetchItem,
+        item,
         deleteItems,
         items,
         fetchItems,
         fetchLatestItems,
         latestItems,
+        likeItem,
+        unlikeItem,
 
         tags,
         fetchTags,
