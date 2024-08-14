@@ -1,10 +1,14 @@
 package io.jahidem.collectr;
 
+import io.jahidem.collectr.dto.RegisterRequest;
 import io.jahidem.collectr.model.CollectionCatagory;
 import io.jahidem.collectr.model.Item;
 import io.jahidem.collectr.model.ItemTag;
+import io.jahidem.collectr.repository.AppUserRepository;
+import io.jahidem.collectr.service.AuthenticationService;
 import io.jahidem.collectr.service.CollectionCatagoryService;
 import io.jahidem.collectr.service.ItemTagService;
+import io.jahidem.collectr.service.UserService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -23,7 +27,8 @@ public class CollectrApplication {
     @Bean
     public CommandLineRunner commandLineRunner(
             CollectionCatagoryService service,
-            ItemTagService tagService
+            ItemTagService tagService,
+            AuthenticationService authenticationService
     ) {
         return args -> {
             try {
@@ -90,6 +95,18 @@ public class CollectrApplication {
                         service.saveCollectionCatagory(collectionCatagory);
                     }
 
+                }
+
+                if(authenticationService.getAuth("admin@mail.com") == null){
+                    authenticationService.registerAdmin(
+                            RegisterRequest.builder()
+                                    .email("admin@mail.com")
+                                    .firstname("Lelouch")
+                                    .lastname("Lamperouge")
+                                    .password("admin")
+                                    .lastname("")
+                                    .build()
+                    );
                 }
             } catch (Exception e) {
                 System.out.println("\n" + e.getMessage());

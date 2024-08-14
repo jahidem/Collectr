@@ -6,6 +6,7 @@ import { AuthContext } from '@/providers/authUserContext';
 import { authContextType } from '@/types/auth';
 import { ImageIcon, User } from 'lucide-react';
 import {
+  auth,
   collections as collectionsApi,
   items as itemsApi,
 } from '@/assets/constants/api';
@@ -69,7 +70,9 @@ export default function Collection() {
       <div className='container mx-auto mb-12'>
         <DataTable
           columns={
-            authUser && collection && authUser.id == collection.user.id
+            authUser &&
+            ((collection && authUser.id == collection.user.id) ||
+              authUser.role == 'ADMIN')
               ? columns
               : columns.slice(1)
           }

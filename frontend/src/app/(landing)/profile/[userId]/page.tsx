@@ -41,16 +41,16 @@ export default function Profile() {
         </div>
       </div>
       <Separator className='my-4' />
-        <div className='container mx-auto'>
-          <DataTable
+      <div className='container mx-auto'>
+        <DataTable
           columns={
-            authUser && authUser.id == userId
+            authUser && (authUser.id == userId || authUser.role == 'ADMIN')
               ? columns
               : columns.slice(1)
           }
-            data={collections}
-          />
-        </div>
+          data={collections}
+        />
+      </div>
     </div>
   ) : (
     <div className='w-full h-screen flex justify-center items-center'>

@@ -57,7 +57,7 @@ export function DataTable<TData, TValue>({
   const { authUser } = useContext(AuthContext) as authContextType;
   return (
     <div>
-      {authUser?.id == collection?.user.id && (
+      {(authUser?.id == collection?.user.id || authUser?.role == 'ADMIN') && (
         <div className='flex justify-between'>
           <h4 className='text-xl font-medium'>Item List</h4>
 
@@ -83,7 +83,7 @@ export function DataTable<TData, TValue>({
 
       <ScrollArea className='h-[480px] rounded-md border'>
         <Table>
-          <TableHeader >
+          <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {

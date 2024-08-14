@@ -56,7 +56,7 @@ export function DataTable<TData, TValue>({
   const { authUser } = useContext(AuthContext) as authContextType;
   return (
     <div>
-      {authUser?.id == user?.id && (
+      {(authUser?.role == 'ADMIN' || authUser?.id == user?.id) && (
         <div className='flex justify-between'>
           <h4 className='text-xl font-medium'>Collection List</h4>
 

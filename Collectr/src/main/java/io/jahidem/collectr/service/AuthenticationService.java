@@ -39,7 +39,7 @@ public class AuthenticationService {
     }
 
     public User getAuth(String email){
-        var user = userRepository.findByEmail(email).orElseThrow();
+        var user = userRepository.findByEmail(email).orElse(null);
         return user;
     }
     public AuthenticationResponse login(LoginRequest loginRequest) {
@@ -53,5 +53,21 @@ public class AuthenticationService {
                 .user(user)
                 .build();
 
+    }
+
+    public AuthenticationResponse registerAdmin(RegisterRequest registerRequest) {
+        var user = User.builder()
+                .firstname(registerRequest.getFirstname())
+                .lastname(registerRequest.getLastname())
+                .email(registerRequest.getEmail())
+                .password(passwordEncoder.encode(registerRequest.getPassword()))
+                .role(Role.ADMIN)
+                .build();
+        userRepository.save(user);
+        var jwt = jwtService.generateToken(user);
+        return AuthenticationResponse.builder()
+                .token(jwt)
+                .user(user)
+                .build();
     }
 }

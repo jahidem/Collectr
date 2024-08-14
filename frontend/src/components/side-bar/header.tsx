@@ -14,7 +14,6 @@ import { authContextType } from '@/types/auth';
 const linkItems = [
   { name: 'Home', href: '/home' },
   { name: 'Profile', href: '/profile' },
-  { name: 'Setting', href: '/setting' },
   { name: 'Admin', href: '/admin' },
 ];
 
@@ -26,7 +25,7 @@ export default function Header() {
     <header className='sticky top-0 flex h-16 items-center gap-4 border-b backdrop-blur-md px-4 md:px-6 z-50'>
       <nav className='hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6'>
         <Link
-          href='/'
+          href='/home'
           className='flex items-center gap-2 text-lg font-semibold md:text-base'>
           <CollectrLogo className='text-xl' />
           <span className='sr-only'>Acme Inc</span>
@@ -63,10 +62,9 @@ export default function Header() {
         <SheetContent side='left'>
           <nav className='grid gap-6 text-lg font-medium'>
             <Link
-              href='/'
+              href='/home'
               className='flex items-center gap-2 text-lg font-semibold md:text-base'>
               <CollectrLogo className='text-xl' />
-              <span className='sr-only'>Acme Inc</span>
             </Link>
             {linkItems.map((item) => (
               <Link
@@ -94,15 +92,19 @@ export default function Header() {
           </div>
         </form>
         <ModeToggle />
-        {authUser && (
+        {authUser ? (
           <LogOut
             className='h-5 w-5 text-muted-foreground hover:text-foreground mx-4'
             cursor='pointer'
             onClick={() => {
               setAuth(null);
-              replace('/');
+              replace('/home');
             }}
           />
+        ) : (
+          <Link href='/auth/sign-in'>
+            <Button>Sign in / sign up</Button>
+          </Link>
         )}
       </div>
     </header>
