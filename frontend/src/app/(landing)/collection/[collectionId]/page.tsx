@@ -17,6 +17,7 @@ import { CollectrLogo } from '@/components/ui/collectrLogo';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
+import { Badge } from '@/components/ui/badge';
 export default function Collection() {
   const { items, collection, fetchCollection, fetchItems } = useContext(
     ModelContext
@@ -25,35 +26,43 @@ export default function Collection() {
   const { authUser } = useContext(AuthContext) as authContextType;
 
   useEffect(() => {
-    fetchCollection(`${collectionsApi}/collection/${collectionId}`);
-    fetchItems(`${itemsApi}/collection/${collectionId}`);
+    if (collectionId) {
+      fetchCollection(`${collectionsApi}/collection/${collectionId}`);
+      fetchItems(`${itemsApi}/collection/${collectionId}`);
+    }
   }, [collectionId]);
 
   return collectionId ? (
     <div className='flex flex-col gap-2 m-12'>
-      <div className='flex gap-24 items-center'>
+      <div className='flex gap-12 items-center'>
         <div
           style={{
             position: 'relative',
-            width: `${180}px`,
+            width: `${160}px`,
             height: `${180}px`,
           }}>
           {collection?.imageId ? (
             <Image
               fill
-              style={{ objectFit: 'contain' }}
+              style={{ objectFit: 'contain', zIndex: -10 }}
               src={`https://ucarecdn.com/${collection.imageId}/`}
               alt={'collection image'}
             />
           ) : (
-            <ImageIcon className='h-48 w-48 text-muted-foreground' />
+            <div className='flex justify-center items-center h-36 rounded-lg bg-secondary'>
+              <ImageIcon />
+            </div>
           )}
         </div>
-        <div>
-          <h4 className='text-xl font-medium'>{collection?.title}</h4>
+        <div className='flex-1 space-y-4'>
+          <div>
+            <p className='font-mono text-primary'>#collection</p>
+            <h4 className='text-xl font-medium'>{collection?.title}</h4>
+          </div>
           <p className='text-lg text-muted-foreground'>
             {collection?.description}
           </p>
+          <Badge>{collection?.catagory?.name}</Badge>
         </div>
       </div>
       <Separator className='my-4' />

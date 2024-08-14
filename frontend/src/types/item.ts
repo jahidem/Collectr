@@ -1,8 +1,24 @@
+import { User } from "./auth";
+import { Collection, ItemField } from "./collection";
+
 export type Item = {
   id: string;
   name: string;
-  tags: string;
+  itemTags: ItemTag[];
 
-  collectionId: string;
-  collectionName: string;
+  itemFields: ItemField[]
+}
+
+export type LatestItem = {
+  id: string;
+  name: string;
+  itemTags: ItemTag[];
+
+  collection: Collection;
+  user: User
+}
+
+export type ItemTag = {
+  id: string;
+  name: string;
 }

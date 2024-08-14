@@ -9,5 +9,7 @@ import java.util.UUID;
 
 public interface ItemRepository extends JpaRepository<Item, UUID> {
     public List<Item> findAllByCollectionId(UUID collectionId);
+
+    public List<Item> findAllByOrderByCreatedAtDesc();
 }
 

@@ -1,9 +1,6 @@
 package io.jahidem.collectr.model;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,13 +21,13 @@ public class ItemTemplate{
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-
-    @OneToOne(fetch = FetchType.EAGER)
+    @JsonIgnore
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "collection_id"
     )
     private Collection collection;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "itemTemplate", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "itemTemplate", cascade = CascadeType.ALL)
     private List<ItemField> itemFields;
 }

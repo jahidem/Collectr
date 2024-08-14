@@ -1,48 +1,15 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Collection } from '@/types/collection';
-import { Item } from '@/types/item';
+import { LatestItem } from '@/types/item';
 import { ColumnDef } from '@tanstack/react-table';
-import { ArrowUpDown, ImageIcon } from 'lucide-react';
-import Image from 'next/image';
+import { ArrowUpDown } from 'lucide-react';
+import Link from 'next/link';
 
-export const columns: ColumnDef<Item>[] = [
-  {
-    id: 'select',
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && 'indeterminate')
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label='Select all'
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label='Select row'
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-
+export const columns: ColumnDef<LatestItem>[] = [
   {
     accessorKey: 'id',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant='ghost'
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-          ID
-          <ArrowUpDown className='ml-2 h-4 w-4' />
-        </Button>
-      );
-    },
+    header: "ID"
   },
   {
     accessorKey: 'name',
@@ -58,22 +25,53 @@ export const columns: ColumnDef<Item>[] = [
     },
   },
   {
-    accessorKey: 'itemTags',
+    accessorKey: 'collection.title',
     header: ({ column }) => {
       return (
         <Button
           variant='ghost'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-          Tags
+          Collection
           <ArrowUpDown className='ml-2 h-4 w-4' />
         </Button>
       );
     },
     cell: ({ row }) => (
+      <Link
+        href={`collection/${row.original.collection.id}`}
+        className='hover:underline'>
+        {row.original.collection.title}
+      </Link>
+    ),
+  },
+  {
+    accessorKey: 'user.email',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant='ghost'
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+          User
+          <ArrowUpDown className='ml-2 h-4 w-4' />
+        </Button>
+      );
+    },
+    cell: ({ row }) => (
+      <Link
+        href={`profile/${row.original.user.id}`}
+        className='hover:underline'>
+        {row.original.user.email}
+      </Link>
+    ),
+  },
+  {
+    accessorKey: 'itemTags',
+    header: "Tags",
+    cell: ({ row }) => (
       <div className='flex flex-wrap gap-4'>
         {row.original.itemTags.map((item) => (
           <Badge
-            variant='secondary'
+            variant='outline'
             key={item.id}>
             {item.name}
           </Badge>
@@ -81,5 +79,4 @@ export const columns: ColumnDef<Item>[] = [
       </div>
     ),
   },
-
 ];

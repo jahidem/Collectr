@@ -23,26 +23,51 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import {
-  collections as collectionsApi,
+  collectionCatagories,
+  items as itemsApi,
+  itemTags,
   itemTemplates,
 } from '@/assets/constants/api';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
-import { useContext, useEffect, useState } from 'react';
+import { SetStateAction, useContext, useEffect, useState } from 'react';
 import { Status } from '@/types/state';
 import collectrAPI from '@/api/CollectrAPI';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { ModelContext } from '@/providers/modelProvider';
 import { ModelContextType } from '@/types/model';
 import { Checkbox } from '@/components/ui/checkbox';
+import { ItemTag } from '@/types/item';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { cn } from '@/lib/utils';
+import { CaretSortIcon } from '@radix-ui/react-icons';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command';
+import { Badge } from '@/components/ui/badge';
+import { X } from 'lucide-react';
 
 const validationSchema = z.object({
   name: z.string().min(1, {
     message: 'provide a name.',
   }),
-  tags: z.string(),
+  tags: z.array(
+    z.object({
+      id: z.string(),
+      name: z.string(),
+    })
+  ),
   itemFields: z.array(
     z.object({
       fieldValue: z.any(),
@@ -54,13 +79,15 @@ type FormValues = z.infer<typeof validationSchema>;
 
 export default function NewItem() {
   const [status, setStatus] = useState<Status>(Status.IDLE);
+  const [tags, setTags] = useState<ItemTag[]>([]);
+
   const [open, setOpen] = useState(false);
-  const { fetchCollections, user, collection } = useContext(
+  const { fetchItems, user, collection } = useContext(
     ModelContext
   ) as ModelContextType;
   const defaultValues: FormValues = {
     name: '',
-    tags: '',
+    tags: [],
     itemFields: [],
   };
   const form = useForm<FormValues>({
@@ -84,27 +111,29 @@ export default function NewItem() {
       });
     }
   }, [collection]);
+  useEffect(() => {
+    collectrAPI.get(itemTags).then((res) => setTags(res.data));
+  }, []);
 
   async function onSubmit(values: FormValues) {
     console.log(values);
-    // setStatus(Status.PENDING);
+    setStatus(Status.PENDING);
 
-    // try {
-    //   const response = await collectrAPI.post(
-    //     collectionsApi,
-    //     JSON.stringify(values)
-    //   );
-    //   console.log(response);
+    try {
+      const response = await collectrAPI.post(
+        itemsApi,
+        JSON.stringify({ ...values, collectionId: collection?.id })
+      );
 
-    //   setStatus(response.status == 201 ? Status.SUCCESS : Status.ERROR);
-    // } catch (err) {
-    //   setStatus(Status.ERROR);
-    // } finally {
-    //   fetchCollections(`${collectionsApi}/user/${user?.id}`);
-    //   setStatus(Status.IDLE);
-    //   form.reset(defaultValues);
-    //   setOpen(false);
-    // }
+      setStatus(response.status == 201 ? Status.SUCCESS : Status.ERROR);
+    } catch (err) {
+      setStatus(Status.ERROR);
+    } finally {
+      fetchItems(`${itemsApi}/collection/${collection?.id}`);
+      setStatus(Status.IDLE);
+      form.reset(defaultValues);
+      setOpen(false);
+    }
   }
 
   return (
@@ -145,22 +174,85 @@ export default function NewItem() {
               )}
             />
             <FormField
-              name='tags'
               control={form.control}
+              name='tags'
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel className='text-base'>Tags</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder='Enter item tags'
-                      className='mt-3'
-                      {...field}
-                    />
-                  </FormControl>
+                <FormItem className='flex flex-col'>
+                  <FormLabel>Tags</FormLabel>
+                  <div className='flex flex-wrap gap-4'>
+                    {field.value.map((item) => (
+                      <Badge
+                        onClick={() => {
+                          form.setValue('tags', [
+                            ...field.value.filter((tag) => tag.id != item.id),
+                          ]);
+                        }}
+                        variant='secondary'
+                        className='gap-x-2 items-center hover:cursor-pointer'
+                        key={item.id}>
+                        <p>{item.name}</p>
+                        <X className='h-4 w-4 ' />
+                      </Badge>
+                    ))}
+                  </div>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant='outline'
+                          role='combobox'
+                          className={cn(
+                            'justify-between',
+                            !field.value && 'text-muted-foreground'
+                          )}>
+                          Add tag
+                          <CaretSortIcon className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className='p-0'>
+                      <Command>
+                        <CommandInput
+                          placeholder='Search tags...'
+                          className='h-9'
+                        />
+                        <CommandList>
+                          <CommandEmpty>No tags found.</CommandEmpty>
+                          <CommandGroup>
+                            {tags
+                              .filter((item) => {
+                                let includ = true;
+                                field.value.forEach((ele) => {
+                                  if (ele.id == item.id) includ = false;
+                                });
+                                return includ;
+                              })
+                              .map((tag) => (
+                                <CommandItem
+                                  value={tag.name}
+                                  key={tag.id}
+                                  onSelect={() => {
+                                    form.setValue('tags', [
+                                      ...field.value,
+                                      tag,
+                                    ]);
+                                  }}>
+                                  {tag.name}
+                                </CommandItem>
+                              ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                  <FormDescription>
+                    This is the tag for the collection.
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
+
             <Separator />
             <FormDescription className='text-md'>
               Custom fields:

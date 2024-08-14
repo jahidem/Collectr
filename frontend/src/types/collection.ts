@@ -7,7 +7,7 @@ export type Collection = {
   title: string;
   description: string;
   imageId: string;
-  category: CollectionCatagory;
+  catagory: CollectionCatagory;
   itemTemplate: ItemTemplate;
   user: User;
 }

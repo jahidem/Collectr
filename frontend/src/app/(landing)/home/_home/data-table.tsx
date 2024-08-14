@@ -17,18 +17,9 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Collection } from '@/types/collection';
-import { Button } from '@/components/ui/button';
-import React, { useContext, useEffect } from 'react';
-import { ModelContext } from '@/providers/modelProvider';
-import { ModelContextType } from '@/types/model';
-import { collections, items } from '@/assets/constants/api';
-import { AuthContext } from '@/providers/authUserContext';
-import { authContextType } from '@/types/auth';
+import React from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useRouter } from 'next/navigation';
-import NewItem from './NewItem';
-import { Item } from '@/types/item';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -51,39 +42,13 @@ export function DataTable<TData, TValue>({
       sorting,
     },
   });
-  const { deleteItems, collection } = useContext(
-    ModelContext
-  ) as ModelContextType;
-  const { authUser } = useContext(AuthContext) as authContextType;
   return (
     <div>
-      {authUser?.id == collection?.user.id && (
-        <div className='flex justify-between'>
-          <h4 className='text-xl font-medium'>Item List</h4>
+      <h4 className='text-lg font-medium mb-6'>Recent Items</h4>
 
-          <div className='flex gap-x-6 mb-6'>
-            <NewItem />
-            <Button
-              disabled={table.getSelectedRowModel().rows.length == 0}
-              onClick={async () => {
-                const deleteList = table
-                  .getSelectedRowModel()
-                  .rows.map((ele) => {
-                    const item = ele.original as Item;
-                    return item.id;
-                  });
-                deleteItems(deleteList, items);
-              }}
-              variant='outline'>
-              Delete
-            </Button>
-          </div>
-        </div>
-      )}
-
-      <ScrollArea className='h-[480px] rounded-md border'>
+      <ScrollArea className='h-[360px] rounded-md border'>
         <Table>
-          <TableHeader >
+          <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
@@ -105,11 +70,6 @@ export function DataTable<TData, TValue>({
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
-                  // className='cursor-pointer'
-                  // onClick={() => {
-                  //   const collection = row.original as Collection;
-                  //   route.push(`/collection/${collection.id}`);
-                  // }}
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}>
                   {row.getVisibleCells().map((cell) => (
@@ -126,7 +86,7 @@ export function DataTable<TData, TValue>({
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className='h-[420px] text-center'>
+                  className='h-[340px] text-center'>
                   No results.
                 </TableCell>
               </TableRow>

@@ -1,10 +1,11 @@
 'use client';
 import collectrAPI from '@/api/CollectrAPI';
+import { itemTags } from '@/assets/constants/api';
 import { User } from '@/types/auth';
 import { Collection } from '@/types/collection';
-import { Item } from '@/types/item';
+import { Item, ItemTag, LatestItem } from '@/types/item';
 import { ModelContextType } from '@/types/model';
-import { createContext, FC, ReactNode, useState } from 'react';
+import { createContext, FC, ReactNode, useEffect, useState } from 'react';
 export const ModelContext = createContext<ModelContextType | null>(null);
 
 const ModelProvider: FC<{ children: ReactNode }> = ({ children }) => {
@@ -12,8 +13,9 @@ const ModelProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [collection, setCollection] = useState<Collection>();
 
   const [items, setItems] = useState<Item[]>([]);
-
+  const [latestItems, setLatestItems] = useState<LatestItem[]>([]);
   const [user, setUser] = useState<User>();
+  const [tags, setTags] = useState<ItemTag[]>([]);
 
   const fetchUser = async (userApi: string) => {
     const response = await collectrAPI.get(userApi);
@@ -33,8 +35,19 @@ const ModelProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const fetchItems = async (api: string) => {
     const response = await collectrAPI.get(api);
     if (response.status == 200) setItems(response.data);
+    console.log(response.data);
   };
 
+  const fetchLatestItems = async (api: string) => {
+    const response = await collectrAPI.get(api);
+    if (response.status == 200) setLatestItems(response.data);
+    console.log(response.data);
+  };
+
+  const fetchTags = async (api: string) => {
+    const response = await collectrAPI.get(api);
+    if (response.status == 200) setTags(response.data);
+  };
   const deleteCollections = async (
     collectionIds: string[],
     collectionsApi: string
@@ -50,6 +63,19 @@ const ModelProvider: FC<{ children: ReactNode }> = ({ children }) => {
     });
   };
 
+  const deleteItems = async (itemIds: string[], itemsApi: string) => {
+    itemIds.forEach((id) =>
+      setItems((state) => state.filter((item) => item.id != id))
+    );
+
+    itemIds.forEach(async (id) => {
+      await collectrAPI.delete(`${itemsApi}/item/${id}`);
+    });
+  };
+
+  useEffect(() => {
+    fetchTags(itemTags);
+  }, []);
   return (
     <ModelContext.Provider
       value={{
@@ -65,8 +91,14 @@ const ModelProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setCollections,
         fetchCollections,
 
+        deleteItems,
         items,
         fetchItems,
+        fetchLatestItems,
+        latestItems,
+
+        tags,
+        fetchTags,
       }}>
       {children}
     </ModelContext.Provider>

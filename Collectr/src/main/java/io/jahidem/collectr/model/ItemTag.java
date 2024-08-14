@@ -2,13 +2,17 @@ package io.jahidem.collectr.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -17,19 +21,21 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public class SelectField {
+@JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
+public class ItemTag {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    private Integer selected;
-    private String selectFieldOptions;
+    private String name;
+
 
     @JsonIgnore
-    @OneToOne
-    @JoinColumn(
-            name = "item_field_id"
+    @Nullable
+    @ManyToMany(
+            mappedBy = "itemTags",
+            fetch = FetchType.LAZY
     )
-    private ItemField itemField;
-
+    private List<Item> items;
 }
+

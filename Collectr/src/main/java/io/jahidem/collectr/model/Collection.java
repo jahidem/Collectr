@@ -1,16 +1,16 @@
 package io.jahidem.collectr.model;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import jdk.jfr.Relational;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.annotation.CreatedDate;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,6 +20,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
 public class Collection {
 
     @Id
@@ -53,7 +54,14 @@ public class Collection {
 
     @JsonIgnore
     @OneToMany(mappedBy = "collection",
+    cascade = CascadeType.ALL,
     fetch = FetchType.LAZY)
     List<Item> items;
+
+    @CreationTimestamp
+    @Column(
+            updatable = false
+    )
+    private LocalDateTime createdAt;
 
 }

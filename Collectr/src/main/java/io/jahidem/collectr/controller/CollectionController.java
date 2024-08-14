@@ -1,5 +1,6 @@
 package io.jahidem.collectr.controller;
 
+import io.jahidem.collectr.dto.CollectionDto;
 import io.jahidem.collectr.dto.CreateCollectionRequest;
 import io.jahidem.collectr.model.Collection;
 import io.jahidem.collectr.service.CollectionService;
@@ -34,6 +35,12 @@ public class CollectionController {
     @ResponseStatus(code=HttpStatus.OK)
     public List<Collection> getCollections(Principal principal) {
         return collectionService.getCollections(principal.getName());
+    }
+
+    @GetMapping("/top")
+    @ResponseStatus(code=HttpStatus.OK)
+    public List<CollectionDto> getTop5ByItemCount() {
+        return collectionService.findTopByItemCount();
     }
 
     @DeleteMapping("/collection/{id}")

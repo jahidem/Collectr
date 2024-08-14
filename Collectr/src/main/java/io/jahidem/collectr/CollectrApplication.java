@@ -1,7 +1,10 @@
 package io.jahidem.collectr;
 
 import io.jahidem.collectr.model.CollectionCatagory;
+import io.jahidem.collectr.model.Item;
+import io.jahidem.collectr.model.ItemTag;
 import io.jahidem.collectr.service.CollectionCatagoryService;
+import io.jahidem.collectr.service.ItemTagService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -19,7 +22,8 @@ public class CollectrApplication {
 
     @Bean
     public CommandLineRunner commandLineRunner(
-            CollectionCatagoryService service
+            CollectionCatagoryService service,
+            ItemTagService tagService
     ) {
         return args -> {
             try {
@@ -44,7 +48,41 @@ public class CollectrApplication {
                         "Travel",
                         "Technology",
                         "Historical Artifacts"
-                };                if(service.getCollectionCatagories().isEmpty()){
+                };
+                String[] tagsArray = {
+                        "art", "antique", "painting", "sculpture",
+                        "collectible", "rare", "vintage", "limited edition",
+                        "coin", "currency", "gold", "silver",
+                        "military", "war", "uniform", "medal",
+                        "stamp", "postcard", "philately",
+                        "comic", "graphic novel", "superhero", "manga",
+                        "gaming", "video game", "console", "pc",
+                        "movie", "tv", "film", "actor",
+                        "music", "album", "artist", "genre",
+                        "toy", "action figure", "collectible figure",
+                        "sports", "football", "basketball", "baseball",
+                        "vehicle", "car", "motorcycle", "airplane",
+                        "nature", "science", "wildlife", "fossil",
+                        "book", "literature", "fiction", "nonfiction",
+                        "fashion", "clothing", "accessory", "designer",
+                        "advertising", "marketing", "logo", "slogan",
+                        "food", "drink", "recipe", "restaurant",
+                        "travel", "destination", "tourism", "adventure",
+                        "technology", "gadget", "software", "hardware",
+                        "history", "artifact", "archaeology"
+                };
+
+                if(tagService.findAll().isEmpty()){
+                    for(String tag : tagsArray) {
+                        ItemTag itemTag = ItemTag.builder()
+                                .name(tag)
+                                .build();
+                        tagService.save(itemTag);
+                    }
+
+                }
+
+                if(service.getCollectionCatagories().isEmpty()){
                     for(String category : categoriesArray) {
                         CollectionCatagory collectionCatagory = CollectionCatagory.builder()
                                 .name(category)

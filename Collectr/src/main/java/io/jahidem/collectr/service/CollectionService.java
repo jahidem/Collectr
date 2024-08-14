@@ -1,5 +1,7 @@
 package io.jahidem.collectr.service;
 
+import io.jahidem.collectr.dto.CollectionCatagoryDto;
+import io.jahidem.collectr.dto.CollectionDto;
 import io.jahidem.collectr.dto.CreateCollectionRequest;
 import io.jahidem.collectr.dto.ItemFieldDto;
 import io.jahidem.collectr.model.*;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -54,7 +57,22 @@ public class CollectionService {
         itemTemplateRepository.save(itemTemplate);
         return  collection;
 }
-
+    public List<CollectionDto> findTopByItemCount(){
+        List<Collection> collections = collectionRepository.findTopByItemCount();
+        collections = collections.subList(0, Math.min(5, collections.size()));
+        return collections.stream().map(
+            collection -> CollectionDto.builder()
+                    .title(collection.getTitle())
+                    .description(collection.getDescription())
+                    .id(collection.getId())
+                    .imageId(collection.getImageId())
+                    .catagory(
+                            CollectionCatagoryDto.builder()
+                                    .name(collection.getCatagory().getName())
+                                    .build())
+                    .build()
+        ).collect(Collectors.toList());
+    }
     public List<Collection> getCollections(String email) {
         User user = appUserRepository.findByEmail(email).orElseThrow();
         return collectionRepository.findAllByUser(user);

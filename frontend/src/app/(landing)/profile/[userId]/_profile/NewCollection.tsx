@@ -31,7 +31,7 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { ImageIcon } from 'lucide-react';
+import { CheckIcon, ImageIcon } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import {
   Select,
@@ -48,6 +48,21 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { ModelContext } from '@/providers/modelProvider';
 import { ModelContextType } from '@/types/model';
 import { CollectionCatagory } from '@/types/collection';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { CaretSortIcon } from '@radix-ui/react-icons';
+import { cn } from '@/lib/utils';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command';
 
 const validationSchema = z.object({
   title: z.string().min(1, {
@@ -179,26 +194,65 @@ export default function NewCollection() {
               control={form.control}
               name='collectionCatagoryId'
               render={({ field }) => (
-                <FormItem>
+                <FormItem className='flex flex-col'>
                   <FormLabel>Catagory</FormLabel>
-                  <FormControl>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}>
-                      <SelectTrigger className='w-[180px]'>
-                        <SelectValue placeholder='Select Type' />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {catagories.map((catagory) => (
-                          <SelectItem
-                            key={catagory.id}
-                            value={catagory.id}>
-                            {catagory.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant='outline'
+                          role='combobox'
+                          className={cn(
+                            'justify-between',
+                            !field.value && 'text-muted-foreground'
+                          )}>
+                          {field.value
+                            ? catagories.find(
+                                (catagory) => catagory.id === field.value
+                              )?.name
+                            : 'Select catagory'}
+                          <CaretSortIcon className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className='p-0'>
+                      <Command>
+                        <CommandInput
+                          placeholder='Search catagory...'
+                          className='h-9'
+                        />
+                        <CommandList>
+                          <CommandEmpty>No catagory found.</CommandEmpty>
+                          <CommandGroup>
+                            {catagories.map((catagory) => (
+                              <CommandItem
+                                value={catagory.name}
+                                key={catagory.id}
+                                onSelect={() => {
+                                  form.setValue(
+                                    'collectionCatagoryId',
+                                    catagory.id
+                                  );
+                                }}>
+                                {catagory.name}
+                                <CheckIcon
+                                  className={cn(
+                                    'ml-auto h-4 w-4',
+                                    catagory.id === field.value
+                                      ? 'opacity-100'
+                                      : 'opacity-0'
+                                  )}
+                                />
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                  <FormDescription>
+                    This is the catagory for the collection.
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
