@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: "Collectr"
+  datasource:
+    url: jdbc:postgresql://dpg-cqu9mhjqf0us73a89pu0-a:5432/collectr
+    username: jahid
+    password: 03VeIOsr8pJ9COIRtHa8ox85lBqpATm8
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    database: postgresql
+logging:
+  level:
+    org.springframework.security: trace
