@@ -23,4 +23,20 @@ collectrAPI.interceptors.request.use(
 );
 
 
+collectrAPI.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+    if (
+      (error.response.status === 401 || error.response.status === 403) &&
+      !originalRequest._retry
+    ) {
+      localStorage.removeItem('jwt');
+    }
+
+    return Promise.reject(error);
+  },
+);
+
+
 export default collectrAPI

@@ -15,9 +15,15 @@ const ModelProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [item, setItem] = useState<Item>();
   const [items, setItems] = useState<Item[]>([]);
   const [latestItems, setLatestItems] = useState<LatestItem[]>([]);
+
+  const [users, setUsers] = useState<User[]>([]);
   const [user, setUser] = useState<User>();
   const [tags, setTags] = useState<ItemTag[]>([]);
 
+  const fetchUsers = async (userApi: string) => {
+    const response = await collectrAPI.get(userApi);
+    if (response.status == 200) setUsers(response.data);
+  };
   const fetchUser = async (userApi: string) => {
     const response = await collectrAPI.get(userApi);
     if (response.status == 200) setUser(response.data);
@@ -91,6 +97,46 @@ const ModelProvider: FC<{ children: ReactNode }> = ({ children }) => {
     });
   };
 
+  const deleteUsers = async (userIds: string[], usersApi: string) => {
+    userIds.forEach((id) =>
+      setUsers((state) => state.filter((item) => item.id != id))
+    );
+
+    userIds.forEach(async (id) => {
+      await collectrAPI.delete(`${usersApi}/user/${id}`);
+    });
+  };
+
+  const setAdmin = async (userIds: string[], usersApi: string) => {
+    userIds.forEach((id) =>
+      setUsers((state) =>
+        state.map((item) => {
+          if (item.id == id) item.role = 'ADMIN';
+          return item;
+        })
+      )
+    );
+
+    userIds.forEach(async (id) => {
+      await collectrAPI.post(`${usersApi}/admin/${id}`);
+    });
+  };
+
+  const revokeAdmin = async (userIds: string[], usersApi: string) => {
+    userIds.forEach((id) =>
+      setUsers((state) =>
+        state.map((item) => {
+          if (item.id == id) item.role = 'USER';
+          return item;
+        })
+      )
+    );
+
+    userIds.forEach(async (id) => {
+      await collectrAPI.post(`${usersApi}/user/${id}`);
+    });
+  };
+
   useEffect(() => {
     fetchTags(itemTags);
   }, []);
@@ -100,6 +146,11 @@ const ModelProvider: FC<{ children: ReactNode }> = ({ children }) => {
         user,
         setUser,
         fetchUser,
+        users,
+        fetchUsers,
+        deleteUsers,
+        revokeAdmin,
+        setAdmin,
 
         fetchCollection,
         collection,

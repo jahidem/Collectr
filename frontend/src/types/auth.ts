@@ -18,6 +18,7 @@ export type authContextType = {
   getJwt: () => string | null;
   setAuthUser: Dispatch<SetStateAction<User | undefined>>;
   setAuth: (jwt: string | null) => void;
+  fetchAuthUser: () => Promise<void>;
 }
 
 export type LoginType = {

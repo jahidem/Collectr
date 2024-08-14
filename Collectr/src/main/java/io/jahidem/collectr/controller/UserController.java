@@ -34,4 +34,28 @@ public class UserController {
         return userService.getUser(userId);
     }
 
+    @GetMapping
+    @ResponseStatus(code = HttpStatus.OK)
+    public List<User> getUsers(){
+        return userService.getUsers();
+    }
+
+    @DeleteMapping("/user/{id}")
+    @ResponseStatus(code=HttpStatus.OK)
+    public void deleteUser(@PathVariable("id") UUID userId) {
+        userService.deleteById(userId);
+    }
+
+    @PostMapping("/admin/{id}")
+    @ResponseStatus(code=HttpStatus.OK)
+    public void makeAdmin(@PathVariable("id") UUID userId, Principal principal) {
+            userService.makeAdmin(principal, userId);
+    }
+
+    @PostMapping("/user/{id}")
+    @ResponseStatus(code=HttpStatus.OK)
+    public void makeUser(@PathVariable("id") UUID userId, Principal principal) {
+        userService.makeUser(principal, userId);
+    }
+
 }

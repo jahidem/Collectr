@@ -15,17 +15,17 @@ const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
     getJwt();
   }, []);
   useEffect(() => {
-    const getUser = async () => {
-      const response = await collectrAPI.post(userAuth);
-      if (response.status == 200) {
-        const data = response.data;
-        setAuthUser(data);
-        console.log(data);
-      }
-    };
-    if (jwt) getUser();
+    if (jwt) fetchAuthUser();
   }, [jwt]);
 
+  const fetchAuthUser = async () => {
+    const response = await collectrAPI.post(userAuth);
+    if (response.status == 200) {
+      const data = response.data;
+      setAuthUser(data);
+      console.log(data);
+    }
+  };
   const setAuth = (newJwt: string | null) => {
     setJwtState(newJwt);
     if (newJwt != null) localStorage.setItem('jwt', newJwt);
@@ -51,6 +51,7 @@ const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
         authUser,
         setAuthUser,
         setAuth,
+        fetchAuthUser
       }}>
       {children}
     </AuthContext.Provider>
