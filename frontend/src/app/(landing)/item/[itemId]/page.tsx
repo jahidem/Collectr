@@ -1,10 +1,11 @@
 'use client';
 import { Separator } from '@/components/ui/separator';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { AuthContext } from '@/providers/authUserContext';
 import { authContextType } from '@/types/auth';
 import {
   collections as collectionsApi,
+  comments,
   items as itemsApi,
   likes,
 } from '@/assets/constants/api';
@@ -15,17 +16,36 @@ import { ModelContextType } from '@/types/model';
 import { CollectrLogo } from '@/components/ui/collectrLogo';
 import { useParams } from 'next/navigation';
 import { Badge } from '@/components/ui/badge';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import collectrAPI from '@/api/CollectrAPI';
+import Link from 'next/link';
+import { Status } from '@/types/state';
+import { stat } from 'fs';
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
+import { ScrollArea } from '@/components/ui/scroll-area';
 export default function Collection() {
+  const [comment, setComment] = useState<string>('');
+  const [status, setStatus] = useState<Status>(Status.IDLE);
   const { fetchItem, item, likeItem, unlikeItem } = useContext(
     ModelContext
   ) as ModelContextType;
   const { itemId } = useParams();
   const { authUser } = useContext(AuthContext) as authContextType;
-
   useEffect(() => {
     if (itemId) {
       fetchItem(`${itemsApi}/item/${itemId}`);
     }
+  }, [itemId]);
+
+  useEffect(() => {
+    let fetchItemInterval = undefined;
+    if (itemId) {
+      fetchItemInterval = setInterval(() => {
+        fetchItem(`${itemsApi}/item/${itemId}`);
+      }, 5000);
+    }
+    return () => clearInterval(fetchItemInterval);
   }, [itemId]);
 
   return item ? (
@@ -68,7 +88,11 @@ export default function Collection() {
                       }}
                     />
                   )}
-                  <p>{item.likes.length + ' likes'}</p>
+                  <p>
+                    {item.likes.length +
+                      ' like' +
+                      (item.likes.length > 1 ? 's' : '')}
+                  </p>
                 </div>
               )}
             </div>
@@ -93,6 +117,52 @@ export default function Collection() {
       <Separator className='my-4' />
       <div className='container mx-auto mb-12'>
         <h4 className='text-xl font-medium'>Comments</h4>
+        <ScrollArea className='h-96 p-4 border-2 rounded-md mt-6 border-secondary'>
+          {item.comments.map((ele) => (
+            <div
+              key={ele.id}
+              className='max-w-fit mb-6 bg-secondary p-4 rounded-3xl text-sm'>
+              <Link
+                href={`/profile/${ele.user.id}`}
+                className='hover:underline font-semibold '>
+                {ele.user.email}
+              </Link>
+              <p>{ele.value}</p>
+            </div>
+          ))}
+        </ScrollArea>
+        {authUser && (
+          <div className='flex flex-col gap-2 mt-6 items-start'>
+            <Textarea
+              placeholder='Type your comment here.'
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+            />
+            <Button
+              className='mt-2'
+              disabled={status == Status.PENDING}
+              onClick={async () => {
+                setStatus(Status.PENDING);
+                await collectrAPI.post(
+                  `${comments}`,
+                  JSON.stringify({
+                    userId: authUser.id,
+                    itemId: item.id,
+                    comment: comment,
+                  })
+                );
+                fetchItem(`${itemsApi}/item/${itemId}`);
+                setComment('');
+                setStatus(Status.IDLE);
+              }}>
+              {status == Status.PENDING ? (
+                <LoadingSpinner className='text-sm' />
+              ) : (
+                'Comment'
+              )}
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   ) : (

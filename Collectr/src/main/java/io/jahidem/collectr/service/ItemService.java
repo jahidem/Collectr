@@ -115,6 +115,16 @@ public class ItemService {
                 ).collect(Collectors.toList()))
                 .itemFields(item.getItemFields())
                 .likes(item.getLikes())
+                .comments(item.getComments().stream().map(
+                        comment -> CommentDto.builder()
+                                .id(comment.getId())
+                                .value(comment.getValue())
+                                .user(UserDto.builder()
+                                        .id(comment.getUser().getId())
+                                        .email(comment.getUser().getEmail())
+                                        .build())
+                                .build()
+                ).collect(Collectors.toList()))
                 .build();
     }
 }

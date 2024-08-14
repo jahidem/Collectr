@@ -1,9 +1,6 @@
 package io.jahidem.collectr.dto;
 
-import io.jahidem.collectr.model.Collection;
-import io.jahidem.collectr.model.ItemField;
-import io.jahidem.collectr.model.ItemTag;
-import io.jahidem.collectr.model.Like;
+import io.jahidem.collectr.model.*;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -28,4 +25,6 @@ public class ItemResponseDto {
     private List<TagDto> itemTags;
 
     private List<Like> likes;
+
+    private List<CommentDto> comments;
 }

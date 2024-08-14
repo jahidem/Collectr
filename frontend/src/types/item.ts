@@ -8,11 +8,18 @@ export type Item = {
 
   itemFields: ItemField[]
   likes: Like[]
+  comments: Comment[]
 }
 
 export type Like = {
   id: string;
   user: User;
+}
+
+export type Comment = {
+  id: string;
+  value: string;
+  user: User
 }
 export type LatestItem = {
   id: string;

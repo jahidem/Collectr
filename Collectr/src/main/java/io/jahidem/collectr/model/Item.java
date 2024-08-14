@@ -62,4 +62,13 @@ public class Item {
             fetch = FetchType.EAGER,
         orphanRemoval = true)
     private List<Like> likes;
+
+
+    @Nullable
+    @JsonIgnore
+    @OneToMany(mappedBy = "item",
+            cascade = CascadeType.REMOVE,
+            fetch = FetchType.LAZY,
+            orphanRemoval = true)
+    private List<Comment> comments;
 }
