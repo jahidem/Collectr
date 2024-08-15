@@ -102,9 +102,8 @@ public class CollectrApplication {
                             RegisterRequest.builder()
                                     .email("admin@mail.com")
                                     .firstname("Lelouch")
-                                    .lastname("Lamperouge")
+                                    .lastname("vi Britannia")
                                     .password("admin")
-                                    .lastname("")
                                     .build()
                     );
                 }

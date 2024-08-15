@@ -36,6 +36,8 @@ public class User implements UserDetails {
     private String email;
     @JsonIgnore
     private String password;
+    @Builder.Default
+    private Boolean enabled = true;
 
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -45,8 +47,6 @@ public class User implements UserDetails {
             cascade = CascadeType.ALL
     )
     private UserSetting setting;
-
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -75,6 +75,7 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
+        return this.enabled;
+
     }
 }

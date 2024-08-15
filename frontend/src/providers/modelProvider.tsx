@@ -23,6 +23,7 @@ const ModelProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const fetchUsers = async (userApi: string) => {
     const response = await collectrAPI.get(userApi);
     if (response.status == 200) setUsers(response.data);
+    console.log(response.data);
   };
   const fetchUser = async (userApi: string) => {
     const response = await collectrAPI.get(userApi);
@@ -102,9 +103,7 @@ const ModelProvider: FC<{ children: ReactNode }> = ({ children }) => {
       setUsers((state) => state.filter((item) => item.id != id))
     );
 
-    userIds.forEach(async (id) => {
-      await collectrAPI.delete(`${usersApi}/user/${id}`);
-    });
+    await collectrAPI.post(`${usersApi}/user/delete`, JSON.stringify(userIds));
   };
 
   const setAdmin = async (userIds: string[], usersApi: string) => {
@@ -117,9 +116,7 @@ const ModelProvider: FC<{ children: ReactNode }> = ({ children }) => {
       )
     );
 
-    userIds.forEach(async (id) => {
-      await collectrAPI.post(`${usersApi}/admin/${id}`);
-    });
+    await collectrAPI.post(`${usersApi}/role/admin`, JSON.stringify(userIds));
   };
 
   const revokeAdmin = async (userIds: string[], usersApi: string) => {
@@ -132,9 +129,32 @@ const ModelProvider: FC<{ children: ReactNode }> = ({ children }) => {
       )
     );
 
-    userIds.forEach(async (id) => {
-      await collectrAPI.post(`${usersApi}/user/${id}`);
-    });
+    await collectrAPI.post(`${usersApi}/role/user`, JSON.stringify(userIds));
+  };
+
+  const blockUsers = async (userIds: string[], usersApi: string) => {
+    userIds.forEach((id) =>
+      setUsers((state) =>
+        state.map((item) => {
+          if (item.id == id) item.enabled = false;
+          return item;
+        })
+      )
+    );
+
+    await collectrAPI.post(`${usersApi}/user/block`, JSON.stringify(userIds));
+  };
+
+  const unblockUsers = async (userIds: string[], usersApi: string) => {
+    userIds.forEach((id) =>
+      setUsers((state) =>
+        state.map((item) => {
+          if (item.id == id) item.enabled = true;
+          return item;
+        })
+      )
+    );
+    await collectrAPI.post(`${usersApi}/user/unblock`, JSON.stringify(userIds));
   };
 
   useEffect(() => {
@@ -151,6 +171,8 @@ const ModelProvider: FC<{ children: ReactNode }> = ({ children }) => {
         deleteUsers,
         revokeAdmin,
         setAdmin,
+        blockUsers,
+        unblockUsers,
 
         fetchCollection,
         collection,

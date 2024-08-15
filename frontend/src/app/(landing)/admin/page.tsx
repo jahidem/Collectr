@@ -16,8 +16,11 @@ export default function Admin() {
   ) as authContextType;
   const router = useRouter();
   useEffect(() => {
-    fetchUsers(usersApi);
-  }, []);
+    if (authUser) {
+      if (authUser.role == 'ADMIN') fetchUsers(usersApi);
+      else router.replace('/home');
+    }
+  }, [authUser]);
   useEffect(() => {
     const checkAdmin = async () => {
       await fetchAuthUser();
@@ -32,7 +35,7 @@ export default function Admin() {
   }, [authUser, fetchAuthUser, router, users]);
 
   return users ? (
-    <div className='container mx-auto mb-12'>
+    <div className='container mx-auto'>
       <DataTable
         columns={columns}
         data={users}

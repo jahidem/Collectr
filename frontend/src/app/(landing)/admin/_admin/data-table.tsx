@@ -26,7 +26,7 @@ import { AuthContext } from '@/providers/authUserContext';
 import { authContextType, User } from '@/types/auth';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useRouter } from 'next/navigation';
-import { Item } from '@/types/item';
+import { FaLock, FaLockOpen, FaTrashCan } from 'react-icons/fa6';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -49,16 +49,59 @@ export function DataTable<TData, TValue>({
       sorting,
     },
   });
-  const { deleteUsers, setAdmin, revokeAdmin } = useContext(
-    ModelContext
-  ) as ModelContextType;
+  const { deleteUsers, setAdmin, revokeAdmin, blockUsers, unblockUsers } =
+    useContext(ModelContext) as ModelContextType;
   const { authUser } = useContext(AuthContext) as authContextType;
   return (
     <div>
-      <div className='flex justify-between mt-12'>
-        <h4 className='text-xl font-medium'>User List</h4>
+      {/* <h4 className='text-xl font-medium my-6'>User List</h4> */}
 
-        <div className='flex gap-x-6 mb-6'>
+      <div className='flex justify-between mt-16'>
+        <div className='flex gap-x-4 mb-6 items-center'>
+          <p className='text-md font-semibold'>Account:</p>
+          <Button
+            onClick={async () => {
+              const deleteList = table.getSelectedRowModel().rows.map((ele) => {
+                const item = ele.original as User;
+                return item.id;
+              });
+              unblockUsers(deleteList, users);
+            }}
+            disabled={table.getSelectedRowModel().rows.length == 0}>
+            <FaLockOpen className='mr-2'/>
+            Unblock
+          </Button>
+          <Button
+            onClick={async () => {
+              const deleteList = table.getSelectedRowModel().rows.map((ele) => {
+                const item = ele.original as User;
+                return item.id;
+              });
+              blockUsers(deleteList, users);
+            }}
+            variant='outline'
+            disabled={table.getSelectedRowModel().rows.length == 0}>
+            <FaLock  />
+          </Button>
+
+          <div className='w-2'></div>
+          <Button
+            disabled={table.getSelectedRowModel().rows.length == 0}
+            onClick={async () => {
+              const deleteList = table.getSelectedRowModel().rows.map((ele) => {
+                const item = ele.original as User;
+                return item.id;
+              });
+              deleteUsers(deleteList, users);
+            }}
+            variant='destructive'>
+            <FaTrashCan className='mr-2' />
+            Delete
+          </Button>
+        </div>
+        <div className='flex gap-x-6 mb-6 items-center'>
+          <p className='text-md font-semibold'>Role:</p>
+
           <Button
             onClick={async () => {
               const deleteList = table.getSelectedRowModel().rows.map((ele) => {
@@ -79,20 +122,8 @@ export function DataTable<TData, TValue>({
               revokeAdmin(deleteList, users);
             }}
             disabled={table.getSelectedRowModel().rows.length == 0}
-            variant='secondary'>
+            variant='outline'>
             User
-          </Button>
-          <Button
-            disabled={table.getSelectedRowModel().rows.length == 0}
-            onClick={async () => {
-              const deleteList = table.getSelectedRowModel().rows.map((ele) => {
-                const item = ele.original as User;
-                return item.id;
-              });
-              deleteUsers(deleteList, users);
-            }}
-            variant='destructive'>
-            Delete
           </Button>
         </div>
       </div>

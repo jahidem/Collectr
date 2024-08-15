@@ -25,36 +25,35 @@ export default function Profile() {
     fetchCollections(`${collectionsApi}/user/${userId}`);
   }, [userId]);
 
-  return userId && user ? (
-    <div className='flex flex-col gap-2 m-12'>
-      <div className='flex gap-4 items-center'>
-        <Avatar className='h-16 w-16'>
-          <AvatarFallback className='text-xl'>
-            <User />
-          </AvatarFallback>
-        </Avatar>
-        <div>
-          <h4 className='text-xl font-medium'>
-            {user.firstname + ' ' + user.lastname}
-          </h4>
-          <p className='text-lg text-muted-foreground'>{user.email}</p>
+  return (
+    userId &&
+    user && (
+      <div className='flex flex-col gap-2 m-12'>
+        <div className='flex gap-4 items-center'>
+          <Avatar className='h-16 w-16'>
+            <AvatarFallback className='text-xl'>
+              <User />
+            </AvatarFallback>
+          </Avatar>
+          <div>
+            <h4 className='text-xl font-medium'>
+              {user.firstname + ' ' + user.lastname}
+            </h4>
+            <p className='text-lg text-muted-foreground'>{user.email}</p>
+          </div>
+        </div>
+        <Separator className='my-4' />
+        <div className='container mx-auto'>
+          <DataTable
+            columns={
+              authUser && (authUser.id == userId || authUser.role == 'ADMIN')
+                ? columns
+                : columns.slice(1)
+            }
+            data={collections}
+          />
         </div>
       </div>
-      <Separator className='my-4' />
-      <div className='container mx-auto'>
-        <DataTable
-          columns={
-            authUser && (authUser.id == userId || authUser.role == 'ADMIN')
-              ? columns
-              : columns.slice(1)
-          }
-          data={collections}
-        />
-      </div>
-    </div>
-  ) : (
-    <div className='w-full h-screen flex justify-center items-center'>
-      <CollectrLogo className='text-4xl' />
-    </div>
+    )
   );
 }

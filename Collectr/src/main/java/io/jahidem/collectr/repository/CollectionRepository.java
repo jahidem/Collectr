@@ -14,4 +14,6 @@ public interface CollectionRepository extends JpaRepository<Collection, UUID> {
 
     @Query("SELECT c FROM Collection c WHERE (SELECT COUNT(i) FROM Item i WHERE i.collection = c) >= 0 ORDER BY (SELECT COUNT(i) FROM Item i WHERE i.collection = c) DESC")
     List<Collection> findTopByItemCount();
+
+    void deleteAllByUser(User user);
 }

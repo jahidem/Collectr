@@ -28,18 +28,6 @@ export const columns: ColumnDef<User>[] = [
     enableSorting: false,
     enableHiding: false,
   },
-
-  {
-    accessorKey: 'id',
-    header: 'ID',
-    cell: ({ row }) => (
-      <Link
-        href={`/profile/${row.original.id}`}
-        className='hover:underline'>
-        {row.original.id}
-      </Link>
-    ),
-  },
   {
     accessorKey: 'email',
     header: ({ column }) => {
@@ -53,6 +41,18 @@ export const columns: ColumnDef<User>[] = [
       );
     },
   },
+  {
+    accessorKey: 'enabled',
+    header: 'Status',
+    cell: ({ row }) => (
+      <Link
+        href={`/profile/${row.original.id}`}
+        className='hover:underline'>
+        {row.original.enabled? 'Active' : 'Blocked'}
+      </Link>
+    ),
+  },
+
   {
     accessorKey: 'firstname',
     header: ({ column }) => {

@@ -40,22 +40,33 @@ public class UserController {
         return userService.getUsers();
     }
 
-    @DeleteMapping("/user/{id}")
+    @PostMapping("/user/delete")
     @ResponseStatus(code=HttpStatus.OK)
-    public void deleteUser(@PathVariable("id") UUID userId) {
-        userService.deleteById(userId);
+    public void deleteUser(@RequestBody List<UUID> userIds) {
+        userService.deleteAllById(userIds);
     }
 
-    @PostMapping("/admin/{id}")
+    @PostMapping("/role/admin")
     @ResponseStatus(code=HttpStatus.OK)
-    public void makeAdmin(@PathVariable("id") UUID userId, Principal principal) {
-            userService.makeAdmin(principal, userId);
+    public void makeAdmin(@RequestBody List<UUID> userIds, Principal principal) {
+            userService.makeAllAdmin(principal, userIds);
     }
 
-    @PostMapping("/user/{id}")
+    @PostMapping("/role/user")
     @ResponseStatus(code=HttpStatus.OK)
-    public void makeUser(@PathVariable("id") UUID userId, Principal principal) {
-        userService.makeUser(principal, userId);
+    public void makeUser(@RequestBody List<UUID> userIds, Principal principal) {
+        userService.makeAllUser(principal, userIds);
     }
 
+    @PostMapping("/user/block")
+    @ResponseStatus(code=HttpStatus.OK)
+    public void blockUser(@RequestBody List<UUID> userIds, Principal principal) {
+        userService.blockAllUser(principal, userIds);
+    }
+
+    @PostMapping("/user/unblock")
+    @ResponseStatus(code=HttpStatus.OK)
+    public void unblockUser(@RequestBody List<UUID> userIds, Principal principal) {
+        userService.unblockAllUser(principal, userIds);
+    }
 }

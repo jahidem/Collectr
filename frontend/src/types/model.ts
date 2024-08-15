@@ -26,7 +26,9 @@ export type ModelContextType = {
   deleteUsers: (ids: string[], api: string) => void;
   revokeAdmin: (ids: string[], api: string) => void;
   setAdmin: (ids: string[], api: string) => void;
-
+  blockUsers: (ids: string[], api: string) => void;
+  unblockUsers: (ids: string[], api: string) => void;
+  
   item: Item | undefined;
   fetchItem: (api: string) => void,
   deleteItems: (itemIds: string[], itemApi: string) => void;
