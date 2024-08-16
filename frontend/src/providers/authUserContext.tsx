@@ -10,6 +10,7 @@ export const AuthContext = createContext<authContextType | null>(null);
 const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [authUser, setAuthUser] = useState<User>();
   const [jwt, setJwtState] = useState<string | null>(null);
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
     getJwt();
@@ -51,7 +52,10 @@ const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
         authUser,
         setAuthUser,
         setAuth,
-        fetchAuthUser
+        fetchAuthUser,
+
+        search,
+        setSearch,
       }}>
       {children}
     </AuthContext.Provider>

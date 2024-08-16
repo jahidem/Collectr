@@ -4,7 +4,6 @@ package io.jahidem.collectr.controller;
 import io.jahidem.collectr.dto.ItemDto;
 import io.jahidem.collectr.dto.ItemResponseDto;
 import io.jahidem.collectr.dto.LatestItemDto;
-import io.jahidem.collectr.model.Item;
 import io.jahidem.collectr.service.ItemService;
 import io.jahidem.collectr.service.SearchService;
 import lombok.RequiredArgsConstructor;
@@ -31,10 +30,11 @@ public class ItemController {
 
     @GetMapping("/search")
     @ResponseStatus(code = HttpStatus.OK)
-    public List<Item> searchItem(@RequestParam String search,
-                                 @RequestParam Integer page,
-                                 @RequestParam Integer size) {
+    public Page<ItemResponseDto> searchItem(@RequestParam String search,
+                                            @RequestParam Integer page,
+                                            @RequestParam Integer size) {
         return searchService.search(search, page, size);
+
     }
 
     @GetMapping

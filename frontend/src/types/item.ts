@@ -9,6 +9,7 @@ export type Item = {
   itemFields: ItemField[]
   likes: Like[]
   comments: Comment[]
+  user: User | null
 }
 
 export type Like = {

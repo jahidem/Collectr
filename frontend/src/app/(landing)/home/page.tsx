@@ -95,6 +95,9 @@ export default function Home() {
           <div className='flex flex-wrap gap-4'>
             {tags.map((item) => (
               <Badge
+                onClick={() =>
+                  router.push(`/search?text=${item.name}&page=0&size=10`)
+                }
                 variant='secondary'
                 className='text-md font-normal hover:bg-primary hover:text-primary-foreground cursor-pointer'
                 key={item.id}>

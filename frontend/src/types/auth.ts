@@ -19,6 +19,10 @@ export type authContextType = {
   setAuthUser: Dispatch<SetStateAction<User | undefined>>;
   setAuth: (jwt: string | null) => void;
   fetchAuthUser: () => Promise<void>;
+
+  search: string;
+  setSearch: Dispatch<SetStateAction<string>>;
+
 }
 
 export type LoginType = {

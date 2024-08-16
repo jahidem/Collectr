@@ -2,6 +2,7 @@ package io.jahidem.collectr.dto;
 
 import io.jahidem.collectr.model.ItemField;
 import io.jahidem.collectr.model.Like;
+import io.jahidem.collectr.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,4 +26,6 @@ public class ItemResponseDto {
     private List<Like> likes;
 
     private List<CommentDto> comments;
+
+    private UserDto user;
 }
