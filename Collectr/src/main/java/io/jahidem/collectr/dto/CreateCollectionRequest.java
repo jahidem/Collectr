@@ -13,12 +13,11 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 public class CreateCollectionRequest {
+    List<ItemFieldDto> itemFields;
     private String title;
     private String description;
     private String imageId;
     private UUID collectionCatagoryId;
-
-    List<ItemFieldDto> itemFields;
 }
 
 

@@ -28,9 +28,11 @@ public class JwtService {
         final Claims claims = extractAllClaims(jwtToken);
         return claimsResolver.apply(claims);
     }
-    public  String generateToken(User userDetails) {
+
+    public String generateToken(User userDetails) {
         return generateToken(new HashMap<>(), userDetails);
     }
+
     public String generateToken(
             Map<String, Object> claims,
             User userDetails) {
@@ -39,15 +41,16 @@ public class JwtService {
         claims.put("lastname", userDetails.getLastname());
         claims.put("email", userDetails.getEmail());
         claims.put("role", userDetails.getRole());
-    return  Jwts
-            .builder()
-            .setClaims(claims)
-            .setSubject(userDetails.getUsername())
-            .setIssuedAt(new Date(System.currentTimeMillis()))
-            .setExpiration(new Date(System.currentTimeMillis() + 1000  * 60 * 60 * 24 * 50 ))
-            .signWith(getSigningKey(), SignatureAlgorithm.HS256)
-            .compact();
+        return Jwts
+                .builder()
+                .setClaims(claims)
+                .setSubject(userDetails.getUsername())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 50))
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .compact();
     }
+
     private Claims extractAllClaims(String token) {
         return Jwts
                 .parserBuilder()
@@ -62,7 +65,7 @@ public class JwtService {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public boolean isTokenValid(String token, UserDetails userDetails){
+    public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractEmail(token);
         return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
     }

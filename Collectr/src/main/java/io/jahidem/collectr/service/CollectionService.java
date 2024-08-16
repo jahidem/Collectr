@@ -6,10 +6,8 @@ import io.jahidem.collectr.dto.CreateCollectionRequest;
 import io.jahidem.collectr.dto.ItemFieldDto;
 import io.jahidem.collectr.model.*;
 import io.jahidem.collectr.repository.*;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -25,19 +23,19 @@ public class CollectionService {
     private final CollectionRepository collectionRepository;
     private final ItemTemplateRepository itemTemplateRepository;
     private final AppUserRepository appUserRepository;
-    private final CollectionCatagoryRepository  collectionCatagoryRepository;
+    private final CollectionCatagoryRepository collectionCatagoryRepository;
 
     public Collection addCollection(CreateCollectionRequest createCollectionRequest, String email) {
         ItemTemplate itemTemplate = new ItemTemplate();
         itemTemplate = itemTemplateRepository.save(itemTemplate);
 
         List<ItemField> itemFields = new ArrayList<>();
-        for( ItemFieldDto itemTemplateDto: createCollectionRequest.getItemFields()){
+        for (ItemFieldDto itemTemplateDto : createCollectionRequest.getItemFields()) {
             itemFields.add(ItemField.builder()
-                            .itemTemplate(itemTemplate)
-                            .fieldName(itemTemplateDto.getFieldName())
-                            .itemFieldType(ItemFieldType.valueOf(itemTemplateDto.getItemFieldType()))
-                            .build());
+                    .itemTemplate(itemTemplate)
+                    .fieldName(itemTemplateDto.getFieldName())
+                    .itemFieldType(ItemFieldType.valueOf(itemTemplateDto.getItemFieldType()))
+                    .build());
         }
         itemFieldRepository.saveAll(itemFields);
 
@@ -55,28 +53,31 @@ public class CollectionService {
         collectionRepository.save(collection);
         itemTemplate.setCollection(collection);
         itemTemplateRepository.save(itemTemplate);
-        return  collection;
-}
-    public List<CollectionDto> findTopByItemCount(){
+        return collection;
+    }
+
+    public List<CollectionDto> findTopByItemCount() {
         List<Collection> collections = collectionRepository.findTopByItemCount();
         collections = collections.subList(0, Math.min(5, collections.size()));
         return collections.stream().map(
-            collection -> CollectionDto.builder()
-                    .title(collection.getTitle())
-                    .description(collection.getDescription())
-                    .id(collection.getId())
-                    .imageId(collection.getImageId())
-                    .catagory(
-                            CollectionCatagoryDto.builder()
-                                    .name(collection.getCatagory().getName())
-                                    .build())
-                    .build()
+                collection -> CollectionDto.builder()
+                        .title(collection.getTitle())
+                        .description(collection.getDescription())
+                        .id(collection.getId())
+                        .imageId(collection.getImageId())
+                        .catagory(
+                                CollectionCatagoryDto.builder()
+                                        .name(collection.getCatagory().getName())
+                                        .build())
+                        .build()
         ).collect(Collectors.toList());
     }
+
     public List<Collection> getCollections(String email) {
         User user = appUserRepository.findByEmail(email).orElseThrow();
         return collectionRepository.findAllByUser(user);
     }
+
     public List<Collection> getCollections(UUID id) {
         User user = appUserRepository.findById(id).orElseThrow();
         return collectionRepository.findAllByUser(user);

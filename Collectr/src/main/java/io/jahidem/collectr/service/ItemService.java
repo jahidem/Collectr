@@ -6,8 +6,6 @@ import io.jahidem.collectr.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -58,7 +56,7 @@ public class ItemService {
                 .collect(Collectors.toList());
 
         List<ItemField> templateFields = savedItem.getCollection().getItemTemplate().getItemFields();
-        for(int i=0;i<Math.min( templateFields.size(), templateFields.size());i++) {
+        for (int i = 0; i < Math.min(templateFields.size(), templateFields.size()); i++) {
             ItemField itemField = itemFields.get(i);
             itemField.setFieldName(templateFields.get(i).getFieldName());
             itemField.setItemFieldType(templateFields.get(i).getItemFieldType());

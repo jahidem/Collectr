@@ -17,9 +17,9 @@ public class CommentService {
 
     public void save(CommentRequest comment) {
         commentRepository.save(Comment.builder()
-                        .value(comment.getComment())
-                        .user(appUserRepository.findById(comment.getUserId()).get())
-                        .item(itemRepository.findById(comment.getItemId()).get())
+                .value(comment.getComment())
+                .user(appUserRepository.findById(comment.getUserId()).get())
+                .item(itemRepository.findById(comment.getItemId()).get())
                 .build());
     }
 }

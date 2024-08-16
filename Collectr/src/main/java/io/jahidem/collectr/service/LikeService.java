@@ -4,7 +4,6 @@ import io.jahidem.collectr.model.Like;
 import io.jahidem.collectr.repository.AppUserRepository;
 import io.jahidem.collectr.repository.ItemRepository;
 import io.jahidem.collectr.repository.LikeRepository;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,8 +18,8 @@ public class LikeService {
 
     public void addLike(UUID userId, UUID itemId) {
         likeRepository.save(Like.builder()
-                        .user(appUserRepository.findById(userId).get())
-                        .item(itemRepository.findById(itemId).get())
+                .user(appUserRepository.findById(userId).get())
+                .item(itemRepository.findById(itemId).get())
                 .build());
     }
 

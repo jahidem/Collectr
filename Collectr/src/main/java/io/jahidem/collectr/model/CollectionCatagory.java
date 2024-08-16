@@ -9,6 +9,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.lucene.analysis.Analyzer;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.KeywordField;
 
 import java.util.List;
 import java.util.UUID;
@@ -24,7 +27,7 @@ public class CollectionCatagory {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-
+    @KeywordField()
     private String name;
 
     @JsonIgnore

@@ -1,13 +1,11 @@
 package io.jahidem.collectr.controller;
 
 import io.jahidem.collectr.dto.LikeRequest;
-import io.jahidem.collectr.model.Like;
 import io.jahidem.collectr.service.LikeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @CrossOrigin

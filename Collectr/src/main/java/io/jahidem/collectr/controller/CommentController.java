@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class CommentController {
     private final CommentService commentService;
+
     @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED)
     public void save(@RequestBody CommentRequest comment) {

@@ -1,7 +1,6 @@
 package io.jahidem.collectr.repository;
 
 import io.jahidem.collectr.model.Collection;
-import io.jahidem.collectr.model.ItemTemplate;
 import io.jahidem.collectr.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

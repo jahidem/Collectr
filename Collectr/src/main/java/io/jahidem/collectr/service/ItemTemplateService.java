@@ -11,6 +11,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ItemTemplateService {
     private final ItemTemplateRepository itemTemplateRepository;
+
     public ItemTemplate getItemTemplateById(UUID id) {
         return itemTemplateRepository.findById(id).orElseThrow();
     }

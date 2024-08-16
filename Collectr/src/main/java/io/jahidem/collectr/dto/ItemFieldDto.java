@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public  class ItemFieldDto {
+public class ItemFieldDto {
     private String fieldName;
     private String itemFieldType;
 }
