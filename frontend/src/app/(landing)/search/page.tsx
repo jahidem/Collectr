@@ -9,6 +9,8 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { Suspense } from 'react';
+
 import {
   Pagination,
   PaginationContent,
@@ -63,125 +65,127 @@ export default function Search() {
   }, []);
 
   return items.length ? (
-    <div className='container mx-auto m-12'>
-      <div className='flex-1 space-y-6'>
-        {items.map((item) => (
-          <Card
-            key={item.id}
-            className='w-full '>
-            <CardHeader>
-              <div className='flex justify-between'>
-                <CardTitle>
-                  <Link
-                    className='hover:underline'
-                    href={`/item/${item.id}`}>
-                    {' '}
-                    {item.name}
-                  </Link>
-                </CardTitle>
-                <div>
-                  <Link
-                    href={`/profile/${item.user?.id}`}
-                    className='underline text-primary'>
-                    Owner profile.
-                  </Link>
+    <Suspense>
+      <div className='container mx-auto m-12'>
+        <div className='flex-1 space-y-6'>
+          {items.map((item) => (
+            <Card
+              key={item.id}
+              className='w-full '>
+              <CardHeader>
+                <div className='flex justify-between'>
+                  <CardTitle>
+                    <Link
+                      className='hover:underline'
+                      href={`/item/${item.id}`}>
+                      {' '}
+                      {item.name}
+                    </Link>
+                  </CardTitle>
+                  <div>
+                    <Link
+                      href={`/profile/${item.user?.id}`}
+                      className='underline text-primary'>
+                      Owner profile.
+                    </Link>
+                  </div>
                 </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className='flex flex-wrap gap-4'>
-                {item.itemTags.map((tag) => (
-                  <Badge key={tag.id}>{tag.name}</Badge>
-                ))}
-              </div>
-            </CardContent>
-            <CardFooter className='gap-x-6'>
-              <div className='flex items-center gap-x-2'>
-                <p>{item.likes?.length}</p>
-                <FiThumbsUp className='text-destructive' />
-              </div>
-              <div className='flex items-center gap-x-2'>
-                <p>{item.comments?.length}</p>
-                <FiMessageSquare className='text-destructive' />
-              </div>
-            </CardFooter>
-          </Card>
-        ))}
-      </div>
-      {paging && (
-        <Pagination className='my-12 '>
-          <PaginationContent>
-            {!paging.first && (
-              <PaginationItem>
-                <PaginationPrevious
-                  href={`/search?text=${text}&page=${
-                    paging.pageNumber - 1
-                  }&size=${paging.pageSize}`}
-                />
-              </PaginationItem>
-            )}
+              </CardHeader>
+              <CardContent>
+                <div className='flex flex-wrap gap-4'>
+                  {item.itemTags.map((tag) => (
+                    <Badge key={tag.id}>{tag.name}</Badge>
+                  ))}
+                </div>
+              </CardContent>
+              <CardFooter className='gap-x-6'>
+                <div className='flex items-center gap-x-2'>
+                  <p>{item.likes?.length}</p>
+                  <FiThumbsUp className='text-destructive' />
+                </div>
+                <div className='flex items-center gap-x-2'>
+                  <p>{item.comments?.length}</p>
+                  <FiMessageSquare className='text-destructive' />
+                </div>
+              </CardFooter>
+            </Card>
+          ))}
+        </div>
+        {paging && (
+          <Pagination className='my-12 '>
+            <PaginationContent>
+              {!paging.first && (
+                <PaginationItem>
+                  <PaginationPrevious
+                    href={`/search?text=${text}&page=${
+                      paging.pageNumber - 1
+                    }&size=${paging.pageSize}`}
+                  />
+                </PaginationItem>
+              )}
 
-            {!paging.first && paging.pageNumber - 1 != 1 && (
+              {!paging.first && paging.pageNumber - 1 != 1 && (
+                <PaginationItem>
+                  <PaginationLink
+                    href={`/search?text=${text}&page=${paging.totalPages}&size=${paging.pageSize}`}>
+                    {paging.totalPages}
+                  </PaginationLink>
+                </PaginationItem>
+              )}
+              {!paging.first && (
+                <PaginationItem>
+                  <PaginationLink
+                    href={`/search?text=${text}&page=${
+                      paging.pageNumber - 1
+                    }&size=${paging.pageSize}`}>
+                    {paging.pageNumber - 1}
+                  </PaginationLink>
+                </PaginationItem>
+              )}
               <PaginationItem>
                 <PaginationLink
-                  href={`/search?text=${text}&page=${paging.totalPages}&size=${paging.pageSize}`}>
-                  {paging.totalPages}
+                  href={`/search?text=${text}&page=${paging.pageNumber}&size=${paging.pageSize}`}
+                  isActive>
+                  {paging.pageNumber}
                 </PaginationLink>
               </PaginationItem>
-            )}
-            {!paging.first && (
-              <PaginationItem>
-                <PaginationLink
-                  href={`/search?text=${text}&page=${
-                    paging.pageNumber - 1
-                  }&size=${paging.pageSize}`}>
-                  {paging.pageNumber - 1}
-                </PaginationLink>
-              </PaginationItem>
-            )}
-            <PaginationItem>
-              <PaginationLink
-                href={`/search?text=${text}&page=${paging.pageNumber}&size=${paging.pageSize}`}
-                isActive>
-                {paging.pageNumber}
-              </PaginationLink>
-            </PaginationItem>
-            {!paging.last && (
-              <PaginationItem>
-                <PaginationLink
-                  href={`/search?text=${text}&page=${
-                    paging.pageNumber + 1
-                  }&size=${paging.pageSize}`}>
-                  {paging.pageNumber + 1}
-                </PaginationLink>
-              </PaginationItem>
-            )}
-            {!paging.last && (
-              <PaginationItem>
-                <PaginationEllipsis />
-              </PaginationItem>
-            )}
-            {!paging.last && paging.pageNumber + 1 != paging.totalPages && (
-              <PaginationItem>
-                <PaginationLink
-                  href={`/search?text=${text}&page=${paging.totalPages}&size=${paging.pageSize}`}>
-                  {paging.totalPages}
-                </PaginationLink>
-              </PaginationItem>
-            )}
-            {!paging.last && (
-              <PaginationItem>
-                <PaginationNext
-                  href={`/search?text=${text}&page=${
-                    paging.pageNumber + 1
-                  }&size=${paging.pageSize}`}
-                />
-              </PaginationItem>
-            )}
-          </PaginationContent>
-        </Pagination>
-      )}
-    </div>
+              {!paging.last && (
+                <PaginationItem>
+                  <PaginationLink
+                    href={`/search?text=${text}&page=${
+                      paging.pageNumber + 1
+                    }&size=${paging.pageSize}`}>
+                    {paging.pageNumber + 1}
+                  </PaginationLink>
+                </PaginationItem>
+              )}
+              {!paging.last && (
+                <PaginationItem>
+                  <PaginationEllipsis />
+                </PaginationItem>
+              )}
+              {!paging.last && paging.pageNumber + 1 != paging.totalPages && (
+                <PaginationItem>
+                  <PaginationLink
+                    href={`/search?text=${text}&page=${paging.totalPages}&size=${paging.pageSize}`}>
+                    {paging.totalPages}
+                  </PaginationLink>
+                </PaginationItem>
+              )}
+              {!paging.last && (
+                <PaginationItem>
+                  <PaginationNext
+                    href={`/search?text=${text}&page=${
+                      paging.pageNumber + 1
+                    }&size=${paging.pageSize}`}
+                  />
+                </PaginationItem>
+              )}
+            </PaginationContent>
+          </Pagination>
+        )}
+      </div>
+    </Suspense>
   ) : (
     <div className='flex h-3/4 w-full justify-center items-center text-lg text-muted-foreground'>
       No items.
