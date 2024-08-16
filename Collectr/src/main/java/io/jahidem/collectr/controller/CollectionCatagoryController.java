@@ -16,7 +16,7 @@ public class CollectionCatagoryController {
     private final CollectionCatagoryService collectionCatagoryService;
 
     @GetMapping("")
-    @ResponseStatus(code= HttpStatus.OK)
+    @ResponseStatus(code = HttpStatus.OK)
     public List<CollectionCatagory> getCollectionCatagories() {
         return collectionCatagoryService.getCollectionCatagories();
     }

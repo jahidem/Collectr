@@ -20,7 +20,7 @@ import java.util.UUID;
 @RequestMapping("/api/collections")
 @RequiredArgsConstructor
 public class CollectionController {
-    private  final CollectionService collectionService;
+    private final CollectionService collectionService;
 
     @PostMapping()
     @ResponseStatus(code = HttpStatus.CREATED)
@@ -32,13 +32,13 @@ public class CollectionController {
 
 
     @GetMapping
-    @ResponseStatus(code=HttpStatus.OK)
+    @ResponseStatus(code = HttpStatus.OK)
     public List<Collection> getCollections(Principal principal) {
         return collectionService.getCollections(principal.getName());
     }
 
     @GetMapping("/top")
-    @ResponseStatus(code=HttpStatus.OK)
+    @ResponseStatus(code = HttpStatus.OK)
     public List<CollectionDto> getTop5ByItemCount() {
         return collectionService.findTopByItemCount();
     }
@@ -52,12 +52,12 @@ public class CollectionController {
     @GetMapping("/collection/{id}")
     @ResponseStatus(code = HttpStatus.OK)
     public Collection getCollection(@PathVariable("id") UUID id) {
-        return  collectionService.getCollection(id);
+        return collectionService.getCollection(id);
     }
 
     @GetMapping("/user/{userId}")
     @ResponseStatus(code = HttpStatus.OK)
-    public  List<Collection> getCollections(@PathVariable("userId") UUID userId) {
+    public List<Collection> getCollections(@PathVariable("userId") UUID userId) {
         return collectionService.getCollections(userId);
     }
 

@@ -64,7 +64,12 @@ export default function SignIn() {
       setStatus(Status.ERROR);
     } finally {
       setStatus(Status.IDLE);
-      replace('/home');
+      if (status == Status.SUCCESS) replace('/profile');
+      else
+        form.setError('email', {
+          type: 'custom',
+          message: 'Unregistred / Blocked Email',
+        });
     }
   }
 

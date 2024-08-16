@@ -1,6 +1,5 @@
 package io.jahidem.collectr.dto;
 
-import io.jahidem.collectr.model.CollectionCatagory;
 import io.jahidem.collectr.model.ItemTemplate;
 import io.jahidem.collectr.model.User;
 import lombok.AllArgsConstructor;
@@ -17,17 +16,13 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 public class CollectionDto {
+    List<ItemDto> items;
     private UUID id;
-
     private String title;
     private String description;
     private String imageId;
-
     private ItemTemplate itemTemplate;
     private CollectionCatagoryDto catagory;
     private User user;
-
-    List<ItemDto> items;
-
     private LocalDateTime createdAt;
 }

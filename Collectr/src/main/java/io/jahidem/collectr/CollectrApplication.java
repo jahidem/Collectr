@@ -1,17 +1,23 @@
 package io.jahidem.collectr;
 
+import io.jahidem.collectr.config.Indexer;
+import io.jahidem.collectr.dto.RegisterRequest;
 import io.jahidem.collectr.model.CollectionCatagory;
 import io.jahidem.collectr.model.Item;
 import io.jahidem.collectr.model.ItemTag;
+import io.jahidem.collectr.service.AuthenticationService;
 import io.jahidem.collectr.service.CollectionCatagoryService;
 import io.jahidem.collectr.service.ItemTagService;
+import jakarta.persistence.EntityManager;
+import org.hibernate.search.mapper.orm.Search;
+import org.hibernate.search.mapper.orm.massindexing.MassIndexer;
+import org.hibernate.search.mapper.orm.session.SearchSession;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-
-import java.util.Arrays;
-import java.util.List;
 
 @SpringBootApplication
 public class CollectrApplication {
@@ -23,8 +29,9 @@ public class CollectrApplication {
     @Bean
     public CommandLineRunner commandLineRunner(
             CollectionCatagoryService service,
-            ItemTagService tagService
-    ) {
+            ItemTagService tagService,
+            AuthenticationService authenticationService
+     ) {
         return args -> {
             try {
                 String[] categoriesArray = {
@@ -72,8 +79,8 @@ public class CollectrApplication {
                         "history", "artifact", "archaeology"
                 };
 
-                if(tagService.findAll().isEmpty()){
-                    for(String tag : tagsArray) {
+                if (tagService.findAll().isEmpty()) {
+                    for (String tag : tagsArray) {
                         ItemTag itemTag = ItemTag.builder()
                                 .name(tag)
                                 .build();
@@ -82,8 +89,8 @@ public class CollectrApplication {
 
                 }
 
-                if(service.getCollectionCatagories().isEmpty()){
-                    for(String category : categoriesArray) {
+                if (service.getCollectionCatagories().isEmpty()) {
+                    for (String category : categoriesArray) {
                         CollectionCatagory collectionCatagory = CollectionCatagory.builder()
                                 .name(category)
                                 .build();
@@ -91,9 +98,29 @@ public class CollectrApplication {
                     }
 
                 }
+
+                if (authenticationService.getAuth("admin@mail.com") == null) {
+                    authenticationService.registerAdmin(
+                            RegisterRequest.builder()
+                                    .email("admin@mail.com")
+                                    .firstname("Lelouch")
+                                    .lastname("vi Britannia")
+                                    .password("admin")
+                                    .build()
+                    );
+                }
             } catch (Exception e) {
                 System.out.println("\n" + e.getMessage());
             }
+
+
+
+        };
+    }
+    @Bean
+    public ApplicationRunner buildIndex(Indexer indexer) throws Exception {
+        return (ApplicationArguments args) -> {
+            indexer.indexPersistedData("io.jahidem.collectr.model.Item");
         };
     }
 }

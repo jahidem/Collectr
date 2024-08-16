@@ -22,7 +22,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name ="app_user")
+@Table(name = "app_user")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
 public class User implements UserDetails {
@@ -30,11 +30,13 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private String firstname;
-    private  String lastname;
+    private String lastname;
     @Column(unique = true)
     private String email;
     @JsonIgnore
     private String password;
+    @Builder.Default
+    private Boolean enabled = true;
 
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -44,7 +46,6 @@ public class User implements UserDetails {
             cascade = CascadeType.ALL
     )
     private UserSetting setting;
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -73,6 +74,7 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
+        return this.enabled;
+
     }
 }

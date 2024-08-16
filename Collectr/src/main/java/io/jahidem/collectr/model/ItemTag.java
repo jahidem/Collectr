@@ -10,9 +10,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.KeywordField;
 
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -26,7 +27,7 @@ public class ItemTag {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-
+    @KeywordField()
     private String name;
 
 

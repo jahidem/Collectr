@@ -7,8 +7,21 @@ export type Item = {
   itemTags: ItemTag[];
 
   itemFields: ItemField[]
+  likes: Like[]
+  comments: Comment[]
+  user: User | null
 }
 
+export type Like = {
+  id: string;
+  user: User;
+}
+
+export type Comment = {
+  id: string;
+  value: string;
+  user: User
+}
 export type LatestItem = {
   id: string;
   name: string;

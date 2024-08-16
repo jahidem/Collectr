@@ -1,18 +1,22 @@
 package io.jahidem.collectr.model;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
-import jdk.jfr.Relational;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.data.annotation.CreatedDate;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexedEmbedded;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+
 
 @Entity
 @Data
@@ -23,15 +27,19 @@ import java.util.UUID;
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
 public class Collection {
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "collection",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY)
+    List<Item> items;
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-
+    @FullTextField(analyzer = "english")
     private String title;
+    @FullTextField(analyzer = "english")
     private String description;
     private String imageId;
-
-
     @OneToOne(
             mappedBy = "collection",
             fetch = FetchType.LAZY,
@@ -40,8 +48,7 @@ public class Collection {
     )
     private ItemTemplate itemTemplate;
 
-
-
+    @IndexedEmbedded(includeDepth = 1)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "catagory_id"
@@ -51,13 +58,6 @@ public class Collection {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "collection",
-    cascade = CascadeType.ALL,
-    fetch = FetchType.LAZY)
-    List<Item> items;
-
     @CreationTimestamp
     @Column(
             updatable = false

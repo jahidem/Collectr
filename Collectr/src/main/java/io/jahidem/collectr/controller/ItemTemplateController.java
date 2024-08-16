@@ -4,7 +4,6 @@ import io.jahidem.collectr.model.ItemTemplate;
 import io.jahidem.collectr.service.ItemTemplateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -17,7 +16,7 @@ public class ItemTemplateController {
     private final ItemTemplateService itemTemplateService;
 
     @GetMapping("/{templateId}")
-    @ResponseStatus(code= HttpStatus.OK)
+    @ResponseStatus(code = HttpStatus.OK)
     public ItemTemplate getItemTemplate(@PathVariable UUID templateId) {
         return itemTemplateService.getItemTemplateById(templateId);
     }

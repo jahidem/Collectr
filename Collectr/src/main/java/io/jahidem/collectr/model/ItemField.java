@@ -2,13 +2,13 @@ package io.jahidem.collectr.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
 
 import java.util.UUID;
 
@@ -25,11 +25,8 @@ public class ItemField {
     private String fieldName;
     @Enumerated(EnumType.STRING)
     private ItemFieldType itemFieldType;
+    private String fieldValue;
 
-    private Integer integerField;
-    private String stringField;
-    private String multilineStringField;
-    private Boolean booleanField;
     @OneToOne(
             mappedBy = "itemField",
             cascade = CascadeType.ALL,

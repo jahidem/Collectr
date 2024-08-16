@@ -13,8 +13,9 @@ public class ItemTagService {
     private final ItemTagRepository itemTagRepository;
 
     public List<ItemTag> findAll() {
-        return  itemTagRepository.findAllByOrderByNameAsc();
+        return itemTagRepository.findAllByOrderByNameAsc();
     }
+
     public void save(ItemTag itemTag) {
         itemTagRepository.save(itemTag);
     }

@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class ItemFieldObjDto {
-    private  String fieldValue;
+    private String fieldValue;
 }

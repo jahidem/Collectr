@@ -12,11 +12,11 @@ import java.util.List;
 public class CollectionCatagoryService {
     private final CollectionCatagoryRepository collectionCatagoryRepository;
 
-    public List<CollectionCatagory> getCollectionCatagories(){
+    public List<CollectionCatagory> getCollectionCatagories() {
         return collectionCatagoryRepository.findAllByOrderByNameAsc();
     }
 
-    public  void saveCollectionCatagory(CollectionCatagory collectionCatagory){
+    public void saveCollectionCatagory(CollectionCatagory collectionCatagory) {
         collectionCatagoryRepository.save(collectionCatagory);
     }
 }

@@ -12,11 +12,19 @@ const ModelProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [collections, setCollections] = useState<Collection[]>([]);
   const [collection, setCollection] = useState<Collection>();
 
+  const [item, setItem] = useState<Item>();
   const [items, setItems] = useState<Item[]>([]);
   const [latestItems, setLatestItems] = useState<LatestItem[]>([]);
+
+  const [users, setUsers] = useState<User[]>([]);
   const [user, setUser] = useState<User>();
   const [tags, setTags] = useState<ItemTag[]>([]);
 
+  const fetchUsers = async (userApi: string) => {
+    const response = await collectrAPI.get(userApi);
+    if (response.status == 200) setUsers(response.data);
+    console.log(response.data);
+  };
   const fetchUser = async (userApi: string) => {
     const response = await collectrAPI.get(userApi);
     if (response.status == 200) setUser(response.data);
@@ -32,6 +40,12 @@ const ModelProvider: FC<{ children: ReactNode }> = ({ children }) => {
     console.log(response.data);
   };
 
+  const fetchItem = async (api: string) => {
+    const response = await collectrAPI.get(api);
+    if (response.status == 200) setItem(response.data);
+    console.log(response.data);
+  };
+
   const fetchItems = async (api: string) => {
     const response = await collectrAPI.get(api);
     if (response.status == 200) setItems(response.data);
@@ -42,6 +56,17 @@ const ModelProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const response = await collectrAPI.get(api);
     if (response.status == 200) setLatestItems(response.data);
     console.log(response.data);
+  };
+
+  const likeItem = async (api: string, userId: string, itemId: string) => {
+    await collectrAPI.post(
+      api,
+      JSON.stringify({ userId: userId, itemId: itemId })
+    );
+  };
+
+  const unlikeItem = async (api: string) => {
+    await collectrAPI.delete(api);
   };
 
   const fetchTags = async (api: string) => {
@@ -73,6 +98,65 @@ const ModelProvider: FC<{ children: ReactNode }> = ({ children }) => {
     });
   };
 
+  const deleteUsers = async (userIds: string[], usersApi: string) => {
+    userIds.forEach((id) =>
+      setUsers((state) => state.filter((item) => item.id != id))
+    );
+
+    await collectrAPI.post(`${usersApi}/user/delete`, JSON.stringify(userIds));
+  };
+
+  const setAdmin = async (userIds: string[], usersApi: string) => {
+    userIds.forEach((id) =>
+      setUsers((state) =>
+        state.map((item) => {
+          if (item.id == id) item.role = 'ADMIN';
+          return item;
+        })
+      )
+    );
+
+    await collectrAPI.post(`${usersApi}/role/admin`, JSON.stringify(userIds));
+  };
+
+  const revokeAdmin = async (userIds: string[], usersApi: string) => {
+    userIds.forEach((id) =>
+      setUsers((state) =>
+        state.map((item) => {
+          if (item.id == id) item.role = 'USER';
+          return item;
+        })
+      )
+    );
+
+    await collectrAPI.post(`${usersApi}/role/user`, JSON.stringify(userIds));
+  };
+
+  const blockUsers = async (userIds: string[], usersApi: string) => {
+    userIds.forEach((id) =>
+      setUsers((state) =>
+        state.map((item) => {
+          if (item.id == id) item.enabled = false;
+          return item;
+        })
+      )
+    );
+
+    await collectrAPI.post(`${usersApi}/user/block`, JSON.stringify(userIds));
+  };
+
+  const unblockUsers = async (userIds: string[], usersApi: string) => {
+    userIds.forEach((id) =>
+      setUsers((state) =>
+        state.map((item) => {
+          if (item.id == id) item.enabled = true;
+          return item;
+        })
+      )
+    );
+    await collectrAPI.post(`${usersApi}/user/unblock`, JSON.stringify(userIds));
+  };
+
   useEffect(() => {
     fetchTags(itemTags);
   }, []);
@@ -82,6 +166,13 @@ const ModelProvider: FC<{ children: ReactNode }> = ({ children }) => {
         user,
         setUser,
         fetchUser,
+        users,
+        fetchUsers,
+        deleteUsers,
+        revokeAdmin,
+        setAdmin,
+        blockUsers,
+        unblockUsers,
 
         fetchCollection,
         collection,
@@ -91,11 +182,15 @@ const ModelProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setCollections,
         fetchCollections,
 
+        fetchItem,
+        item,
         deleteItems,
         items,
         fetchItems,
         fetchLatestItems,
         latestItems,
+        likeItem,
+        unlikeItem,
 
         tags,
         fetchTags,
