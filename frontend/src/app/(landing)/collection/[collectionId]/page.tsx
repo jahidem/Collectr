@@ -1,6 +1,5 @@
 'use client';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Separator } from '@/components/ui/separator';
+import Markdown from 'react-markdown';
 import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '@/providers/authUserContext';
 import { authContextType } from '@/types/auth';
@@ -19,6 +18,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import LoadingCollectr from '@/components/spinner/LoadingCollectr';
+import { Separator } from '@/components/ui/separator';
 export default function Collection() {
   const { items, collection, fetchCollection, fetchItems } = useContext(
     ModelContext
@@ -64,9 +64,8 @@ export default function Collection() {
           <Badge>{collection?.catagory?.name}</Badge>
         </div>
       </div>
-      <p className='text-lg text-muted-foreground m-4'>
-        {collection?.description}
-      </p>
+
+      <Markdown className='ml-6 md:ml-12'>{collection?.description}</Markdown>
       <Separator className='mb-4' />
       <div className='container mx-auto mb-12'>
         <DataTable

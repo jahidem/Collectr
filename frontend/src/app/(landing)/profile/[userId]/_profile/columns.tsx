@@ -5,6 +5,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { ArrowUpDown, ImageIcon } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import Markdown from 'react-markdown';
 
 export const columns: ColumnDef<Collection>[] = [
   {
@@ -61,7 +62,7 @@ export const columns: ColumnDef<Collection>[] = [
       <Link
         className='cursor-pointer hover:underline'
         href={`/collection/${row.original.id}`}>
-        {row.original.id.substring(0,13)}
+        {row.original.id.substring(0, 13)}
       </Link>
     ),
   },
@@ -90,5 +91,6 @@ export const columns: ColumnDef<Collection>[] = [
         </Button>
       );
     },
+    cell: ({ row }) => <Markdown>{row.original.description}</Markdown>,
   },
 ];

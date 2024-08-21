@@ -38,6 +38,7 @@ public class Collection {
     @FullTextField(analyzer = "english")
     private String title;
     @FullTextField(analyzer = "english")
+    @Column(length=1000)
     private String description;
     private String imageId;
     @OneToOne(
