@@ -105,6 +105,7 @@ public class ItemService {
         return ItemResponseDto.builder()
                 .id(item.getId())
                 .name(item.getName())
+                .user(UserDto.builder().id(item.getCollection().getUser().getId()).build())
                 .itemTags(item.getItemTags().stream().map(
                         itemTag -> TagDto.builder()
                                 .id(itemTag.getId())

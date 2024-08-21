@@ -35,7 +35,7 @@ export default function Collection() {
 
   return collectionId ? (
     <div className='flex flex-col gap-2 mt-12'>
-      <div className='flex gap-12 items-center px-12'>
+      <div className='flex gap-12 items-start px-12'>
         <div
           style={{
             position: 'relative',
@@ -59,6 +59,11 @@ export default function Collection() {
           <div>
             <p className='font-mono text-primary'>#collection</p>
             <h4 className='text-xl font-medium'>{collection?.title}</h4>
+            <Link
+              className='underline text-muted-foreground text-sm'
+              href={`/profile/${collection?.user.id}`}>
+              Owner
+            </Link>
           </div>
 
           <Badge>{collection?.catagory?.name}</Badge>

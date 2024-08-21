@@ -57,6 +57,11 @@ export default function Collection() {
               <div>
                 <p className='font-mono text-primary'>#item</p>
                 <h4 className='text-xl font-medium'>{item?.name}</h4>
+                <Link
+                  className='underline text-muted-foreground text-sm'
+                  href={`/profile/${item.user.id}`}>
+                  Owner
+                </Link>
               </div>
               {authUser && (
                 <div>

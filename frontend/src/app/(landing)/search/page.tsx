@@ -85,7 +85,7 @@ export default function Search() {
                   <Link
                     href={`/profile/${item.user?.id}`}
                     className='underline text-primary'>
-                    Owner profile.
+                    Owner
                   </Link>
                 </div>
               </div>
