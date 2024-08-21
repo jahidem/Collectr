@@ -63,9 +63,7 @@ import {
   CommandItem,
   CommandList,
 } from '@/components/ui/command';
-import Markdown from 'react-markdown';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
+import MDEditor from '@uiw/react-md-editor';
 
 const validationSchema = z.object({
   title: z.string().min(1, {
@@ -147,7 +145,7 @@ export default function NewCollection() {
       <DialogTrigger asChild>
         <Button>Create</Button>
       </DialogTrigger>
-      <DialogContent className='px-0'>
+      <DialogContent className='px-0 lg:max-w-[700px]'>
         <DialogHeader className='px-6'>
           <DialogTitle>New Collection</DialogTitle>
           <DialogDescription>
@@ -178,42 +176,26 @@ export default function NewCollection() {
                   </FormItem>
                 )}
               />
-              <div className='flex justify-between mt-3 '>
-                <FormLabel className='text-base'>Description</FormLabel>
-                <div className='flex items-center space-x-2'>
-                  <Switch
-                    id='airplane-mode'
-                    checked={preview}
-                    onCheckedChange={setPreview}
-                  />
-                  <p className='text-sm'>Preview Mrakdown</p>
-                </div>
-              </div>
-              {preview ? (
-                <div>
-                  <Markdown className='h-48 p-2 border rounded-md overflow-auto'>
-                    {form.getValues('description')}
-                  </Markdown>
-                </div>
-              ) : (
-                <FormField
-                  name='description'
-                  control={form.control}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Textarea
-                          placeholder='Enter collection description in Markdown'
-                          className='h-48'
-                          maxLength={1000}
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              )}
+
+              <FormField
+                name='description'
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className='text-base'>Description</FormLabel>
+
+                    <FormControl>
+                      <MDEditor
+                        className='h-48'
+                        autoFocus={false}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <FormField
                 control={form.control}
                 name='collectionCatagoryId'

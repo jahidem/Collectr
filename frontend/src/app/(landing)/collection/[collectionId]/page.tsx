@@ -1,5 +1,4 @@
 'use client';
-import Markdown from 'react-markdown';
 import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '@/providers/authUserContext';
 import { authContextType } from '@/types/auth';
@@ -19,6 +18,7 @@ import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import LoadingCollectr from '@/components/spinner/LoadingCollectr';
 import { Separator } from '@/components/ui/separator';
+import MDEditor from '@uiw/react-md-editor';
 export default function Collection() {
   const { items, collection, fetchCollection, fetchItems } = useContext(
     ModelContext
@@ -69,8 +69,11 @@ export default function Collection() {
           <Badge>{collection?.catagory?.name}</Badge>
         </div>
       </div>
+      <MDEditor.Markdown
+        className='ml-6 md:ml-12'
+        source={collection?.description}
+      />
 
-      <Markdown className='ml-6 md:ml-12'>{collection?.description}</Markdown>
       <Separator className='mb-4' />
       <div className='container mx-auto mb-12'>
         <DataTable

@@ -2,10 +2,10 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Collection } from '@/types/collection';
 import { ColumnDef } from '@tanstack/react-table';
+import MDEditor from '@uiw/react-md-editor';
 import { ArrowUpDown, ImageIcon } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import Markdown from 'react-markdown';
 
 export const columns: ColumnDef<Collection>[] = [
   {
@@ -91,6 +91,11 @@ export const columns: ColumnDef<Collection>[] = [
         </Button>
       );
     },
-    cell: ({ row }) => <Markdown>{row.original.description}</Markdown>,
+    cell: ({ row }) => (
+      <MDEditor.Markdown
+        source={row.original.description}
+        skipHtml={true}
+      />
+    ),
   },
 ];
