@@ -48,7 +48,7 @@ export const columns: ColumnDef<Item>[] = [
       <Link
         href={`/item/${row.original.id}`}
         className='hover:underline'>
-        {row.original.id}
+        {row.original.id.substring(0,13)}
       </Link>
     ),
   },

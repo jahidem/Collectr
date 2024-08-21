@@ -63,6 +63,7 @@ import {
   CommandItem,
   CommandList,
 } from '@/components/ui/command';
+import MDEditor from '@uiw/react-md-editor';
 
 const validationSchema = z.object({
   title: z.string().min(1, {
@@ -86,6 +87,7 @@ const validationSchema = z.object({
 type FormValues = z.infer<typeof validationSchema>;
 
 export default function NewCollection() {
+  const [preview, setPreview] = useState<boolean>(false);
   const [status, setStatus] = useState<Status>(Status.IDLE);
   const [open, setOpen] = useState(false);
   const [catagories, setCatagories] = useState<CollectionCatagory[]>([]);
@@ -143,246 +145,251 @@ export default function NewCollection() {
       <DialogTrigger asChild>
         <Button>Create</Button>
       </DialogTrigger>
-      <DialogContent className='sm:max-w-[560px] overflow-auto'>
-        <DialogHeader>
+      <DialogContent className='px-0 lg:max-w-[700px]'>
+        <DialogHeader className='px-6'>
           <DialogTitle>New Collection</DialogTitle>
           <DialogDescription>
             Fill up collection info and item template for the collection.
           </DialogDescription>
         </DialogHeader>
-        <Form {...form}>
-          <form
-            action=''
-            onSubmit={form.handleSubmit(onSubmit)}
-            className='flex-1 space-y-5'>
-            <FormField
-              name='title'
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className='text-base'>Title</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder='Collection title'
-                      type='text'
-                      className='mt-3'
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              name='description'
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className='text-base'>Description</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder='Enter collection description'
-                      className='mt-3'
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name='collectionCatagoryId'
-              render={({ field }) => (
-                <FormItem className='flex flex-col'>
-                  <FormLabel>Catagory</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant='outline'
-                          role='combobox'
-                          className={cn(
-                            'justify-between',
-                            !field.value && 'text-muted-foreground'
-                          )}>
-                          {field.value
-                            ? catagories.find(
-                                (catagory) => catagory.id === field.value
-                              )?.name
-                            : 'Select catagory'}
-                          <CaretSortIcon className='ml-2 h-4 w-4 shrink-0 opacity-50' />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className='p-0'>
-                      <Command>
-                        <CommandInput
-                          placeholder='Search catagory...'
-                          className='h-9'
-                        />
-                        <CommandList>
-                          <CommandEmpty>No catagory found.</CommandEmpty>
-                          <CommandGroup>
-                            {catagories.map((catagory) => (
-                              <CommandItem
-                                value={catagory.name}
-                                key={catagory.id}
-                                onSelect={() => {
-                                  form.setValue(
-                                    'collectionCatagoryId',
-                                    catagory.id
-                                  );
-                                }}>
-                                {catagory.name}
-                                <CheckIcon
-                                  className={cn(
-                                    'ml-auto h-4 w-4',
-                                    catagory.id === field.value
-                                      ? 'opacity-100'
-                                      : 'opacity-0'
-                                  )}
-                                />
-                              </CommandItem>
-                            ))}
-                          </CommandGroup>
-                        </CommandList>
-                      </Command>
-                    </PopoverContent>
-                  </Popover>
-                  <FormDescription>
-                    This is the catagory for the collection.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Controller
-              control={form.control}
-              name='imageId'
-              render={({ field: { onChange, value } }) => (
-                <FormItem>
-                  <FormLabel className='text-base'>
-                    Collection Cover Image
-                  </FormLabel>
-                  <div className='flex items-center gap-8'>
-                    <FileUploaderRegular
-                      onFileUploadSuccess={({ uuid }) => onChange(uuid)}
-                      pubkey='18f1e4998292b0fcaa1c'
-                      maxLocalFileSizeBytes={500000000}
-                      multiple={false}
-                      imgOnly={true}
-                      sourceList='local, url, camera, gdrive'
-                      classNameUploader='my-config'
-                    />
-                    <Avatar className='h-8 w-24'>
-                      {value && (
-                        <AvatarImage src={`https://ucarecdn.com/${value}/`} />
-                      )}
+        <ScrollArea className=' overflow-auto h-96 lg:h-[560px] '>
+          <Form {...form}>
+            <form
+              action=''
+              onSubmit={form.handleSubmit(onSubmit)}
+              className='flex-1 space-y-5 px-6'>
+              <FormField
+                name='title'
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className='text-base'>Title</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder='Collection title'
+                        type='text'
+                        className='mt-3'
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-                      <AvatarFallback className='text-xl'>
-                        <ImageIcon />
-                      </AvatarFallback>
-                    </Avatar>
-                  </div>
-                </FormItem>
-              )}
-            />
-            <Separator />
-            <div className='flex justify-between'>
-              <FormDescription className='text-md'>
-                Add custom fields for items in this collection:
-              </FormDescription>
-              <Button
-                variant='outline'
-                size='sm'
-                onClick={() =>
-                  append({
-                    fieldName: '',
-                    itemFieldType: '',
-                  })
-                }>
-                Add
-              </Button>
-            </div>
-            <ScrollArea className='h-48 border-2 border-foreground-muted p-2'>
-              {fields.map((_, index) => {
-                return (
-                  <div
-                    key={index}
-                    className='my-2'>
-                    <div className='flex justify-around'>
-                      <FormField
-                        control={form.control}
-                        name={`itemFields.${index}.fieldName`}
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Field Name</FormLabel>
-                            <FormControl>
-                              <Input {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
+              <FormField
+                name='description'
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className='text-base'>Description</FormLabel>
+
+                    <FormControl>
+                      <MDEditor
+                        className='h-48'
+                        autoFocus={false}
+                        {...field}
                       />
-                      <FormField
-                        control={form.control}
-                        name={`itemFields.${index}.itemFieldType`}
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Field Type</FormLabel>
-                            <FormControl>
-                              <Select
-                                onValueChange={field.onChange}
-                                defaultValue={field.value}>
-                                <SelectTrigger className='w-[180px]'>
-                                  <SelectValue placeholder='Select Type' />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value='DATE_FIELD'>
-                                    Date Field
-                                  </SelectItem>
-                                  <SelectItem value='INTEGER_FIELD'>
-                                    Integer Field
-                                  </SelectItem>
-                                  <SelectItem value='STRING_FIELD'>
-                                    String Field
-                                  </SelectItem>
-                                  <SelectItem value='MULTILINE_STRING_FIELD'>
-                                    Multiline Field
-                                  </SelectItem>
-                                  <SelectItem value='BOOLEAN_FIELD'>
-                                    Boolean Field
-                                  </SelectItem>
-                                </SelectContent>
-                              </Select>
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name='collectionCatagoryId'
+                render={({ field }) => (
+                  <FormItem className='flex flex-col'>
+                    <FormLabel>Catagory</FormLabel>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant='outline'
+                            role='combobox'
+                            className={cn(
+                              'justify-between',
+                              !field.value && 'text-muted-foreground'
+                            )}>
+                            {field.value
+                              ? catagories.find(
+                                  (catagory) => catagory.id === field.value
+                                )?.name
+                              : 'Select catagory'}
+                            <CaretSortIcon className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className='p-0'>
+                        <Command>
+                          <CommandInput
+                            placeholder='Search catagory...'
+                            className='h-9'
+                          />
+                          <CommandList>
+                            <CommandEmpty>No catagory found.</CommandEmpty>
+                            <CommandGroup>
+                              {catagories.map((catagory) => (
+                                <CommandItem
+                                  value={catagory.name}
+                                  key={catagory.id}
+                                  onSelect={() => {
+                                    form.setValue(
+                                      'collectionCatagoryId',
+                                      catagory.id
+                                    );
+                                  }}>
+                                  {catagory.name}
+                                  <CheckIcon
+                                    className={cn(
+                                      'ml-auto h-4 w-4',
+                                      catagory.id === field.value
+                                        ? 'opacity-100'
+                                        : 'opacity-0'
+                                    )}
+                                  />
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+                    <FormDescription>
+                      This is the catagory for the collection.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Controller
+                control={form.control}
+                name='imageId'
+                render={({ field: { onChange, value } }) => (
+                  <FormItem>
+                    <FormLabel className='text-base'>
+                      Collection Cover Image
+                    </FormLabel>
+                    <div className='flex items-center gap-8'>
+                      <FileUploaderRegular
+                        onFileUploadSuccess={({ uuid }) => onChange(uuid)}
+                        pubkey='18f1e4998292b0fcaa1c'
+                        maxLocalFileSizeBytes={500000000}
+                        multiple={false}
+                        imgOnly={true}
+                        sourceList='local, url, camera, gdrive'
+                        classNameUploader='my-config'
                       />
+                      <Avatar className='h-8 w-24'>
+                        {value && (
+                          <AvatarImage src={`https://ucarecdn.com/${value}/`} />
+                        )}
+
+                        <AvatarFallback className='text-xl'>
+                          <ImageIcon />
+                        </AvatarFallback>
+                      </Avatar>
                     </div>
-                  </div>
-                );
-              })}
-            </ScrollArea>
-
-            <div className='flex justify-between'>
-              <DialogClose asChild>
+                  </FormItem>
+                )}
+              />
+              <Separator />
+              <div className='flex justify-between'>
+                <FormDescription className='text-md'>
+                  Add custom fields for items in this collection:
+                </FormDescription>
                 <Button
-                  variant='secondary'
-                  onClick={() => form.reset(defaultValues)}>
-                  Cancel
+                  variant='outline'
+                  size='sm'
+                  onClick={() =>
+                    append({
+                      fieldName: '',
+                      itemFieldType: '',
+                    })
+                  }>
+                  Add
                 </Button>
-              </DialogClose>
-              <Button
-                type='submit'
-                disabled={status === Status.PENDING}>
-                {status === Status.IDLE ? 'Submit' : <LoadingSpinner />}
-              </Button>
-            </div>
-          </form>
-        </Form>
+              </div>
+              <ScrollArea className='h-48 border-2 border-foreground-muted p-2'>
+                {fields.map((_, index) => {
+                  return (
+                    <div
+                      key={index}
+                      className='my-2'>
+                      <div className='flex justify-around'>
+                        <FormField
+                          control={form.control}
+                          name={`itemFields.${index}.fieldName`}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Field Name</FormLabel>
+                              <FormControl>
+                                <Input {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name={`itemFields.${index}.itemFieldType`}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Field Type</FormLabel>
+                              <FormControl>
+                                <Select
+                                  onValueChange={field.onChange}
+                                  defaultValue={field.value}>
+                                  <SelectTrigger className='w-[180px]'>
+                                    <SelectValue placeholder='Select Type' />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value='DATE_FIELD'>
+                                      Date Field
+                                    </SelectItem>
+                                    <SelectItem value='INTEGER_FIELD'>
+                                      Integer Field
+                                    </SelectItem>
+                                    <SelectItem value='STRING_FIELD'>
+                                      String Field
+                                    </SelectItem>
+                                    <SelectItem value='MULTILINE_STRING_FIELD'>
+                                      Multiline Field
+                                    </SelectItem>
+                                    <SelectItem value='BOOLEAN_FIELD'>
+                                      Boolean Field
+                                    </SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </ScrollArea>
+
+              <div className='flex justify-between'>
+                <DialogClose asChild>
+                  <Button
+                    variant='secondary'
+                    onClick={() => form.reset(defaultValues)}>
+                    Cancel
+                  </Button>
+                </DialogClose>
+                <Button
+                  type='submit'
+                  disabled={status === Status.PENDING}>
+                  {status === Status.IDLE ? 'Submit' : <LoadingSpinner />}
+                </Button>
+              </div>
+            </form>
+          </Form>
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );

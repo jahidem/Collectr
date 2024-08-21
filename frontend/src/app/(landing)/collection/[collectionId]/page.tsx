@@ -1,6 +1,4 @@
 'use client';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Separator } from '@/components/ui/separator';
 import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '@/providers/authUserContext';
 import { authContextType } from '@/types/auth';
@@ -14,11 +12,13 @@ import { DataTable } from './_collection/data-table';
 import { columns } from './_collection/columns';
 import { ModelContext } from '@/providers/modelProvider';
 import { ModelContextType } from '@/types/model';
-import { CollectrLogo } from '@/components/ui/collectrLogo';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
+import LoadingCollectr from '@/components/spinner/LoadingCollectr';
+import { Separator } from '@/components/ui/separator';
+import MDEditor from '@uiw/react-md-editor';
 export default function Collection() {
   const { items, collection, fetchCollection, fetchItems } = useContext(
     ModelContext
@@ -34,8 +34,8 @@ export default function Collection() {
   }, [collectionId]);
 
   return collectionId ? (
-    <div className='flex flex-col gap-2 m-12'>
-      <div className='flex gap-12 items-center'>
+    <div className='flex flex-col gap-2 mt-12'>
+      <div className='flex gap-12 items-start px-12'>
         <div
           style={{
             position: 'relative',
@@ -59,14 +59,22 @@ export default function Collection() {
           <div>
             <p className='font-mono text-primary'>#collection</p>
             <h4 className='text-xl font-medium'>{collection?.title}</h4>
+            <Link
+              className='underline text-muted-foreground text-sm'
+              href={`/profile/${collection?.user.id}`}>
+              Owner
+            </Link>
           </div>
-          <p className='text-lg text-muted-foreground'>
-            {collection?.description}
-          </p>
+
           <Badge>{collection?.catagory?.name}</Badge>
         </div>
       </div>
-      <Separator className='my-4' />
+      <MDEditor.Markdown
+        className='ml-6 md:ml-12'
+        source={collection?.description}
+      />
+
+      <Separator className='mb-4' />
       <div className='container mx-auto mb-12'>
         <DataTable
           columns={
@@ -81,8 +89,6 @@ export default function Collection() {
       </div>
     </div>
   ) : (
-    <div className='w-full h-full flex justify-center items-center'>
-      <CollectrLogo className='text-4xl' />
-    </div>
+    <LoadingCollectr />
   );
 }

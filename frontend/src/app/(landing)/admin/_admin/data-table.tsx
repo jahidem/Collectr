@@ -51,48 +51,52 @@ export function DataTable<TData, TValue>({
   });
   const { deleteUsers, setAdmin, revokeAdmin, blockUsers, unblockUsers } =
     useContext(ModelContext) as ModelContextType;
-  const { authUser } = useContext(AuthContext) as authContextType;
+  const { authUser, setAuth } = useContext(AuthContext) as authContextType;
   return (
     <div>
       {/* <h4 className='text-xl font-medium my-6'>User List</h4> */}
 
-      <div className='flex justify-between mt-16'>
-        <div className='flex gap-x-4 mb-6 items-center'>
+      <div className='flex flex-col md:flex-row justify-between mt-16'>
+        <div className='flex gap-4 mb-6 items-center flex-wrap'>
           <p className='text-md font-semibold'>Account:</p>
           <Button
             onClick={async () => {
-              const deleteList = table.getSelectedRowModel().rows.map((ele) => {
+              const list = table.getSelectedRowModel().rows.map((ele) => {
                 const item = ele.original as User;
                 return item.id;
               });
-              unblockUsers(deleteList, users);
+              unblockUsers(list, users);
             }}
             disabled={table.getSelectedRowModel().rows.length == 0}>
-            <FaLockOpen className='mr-2'/>
+            <FaLockOpen className='mr-2' />
             Unblock
           </Button>
           <Button
             onClick={async () => {
-              const deleteList = table.getSelectedRowModel().rows.map((ele) => {
+              const list = table.getSelectedRowModel().rows.map((ele) => {
                 const item = ele.original as User;
                 return item.id;
               });
-              blockUsers(deleteList, users);
+              blockUsers(list, users);
             }}
             variant='outline'
             disabled={table.getSelectedRowModel().rows.length == 0}>
-            <FaLock  />
+            <FaLock />
           </Button>
 
           <div className='w-2'></div>
           <Button
             disabled={table.getSelectedRowModel().rows.length == 0}
             onClick={async () => {
-              const deleteList = table.getSelectedRowModel().rows.map((ele) => {
+              const list = table.getSelectedRowModel().rows.map((ele) => {
                 const item = ele.original as User;
                 return item.id;
               });
-              deleteUsers(deleteList, users);
+              deleteUsers(list, users);
+              if (list.filter((id) => id == authUser?.id).length) {
+                setAuth(null);
+                route.push('/home');
+              }
             }}
             variant='destructive'>
             <FaTrashCan className='mr-2' />
@@ -104,22 +108,22 @@ export function DataTable<TData, TValue>({
 
           <Button
             onClick={async () => {
-              const deleteList = table.getSelectedRowModel().rows.map((ele) => {
+              const list = table.getSelectedRowModel().rows.map((ele) => {
                 const item = ele.original as User;
                 return item.id;
               });
-              setAdmin(deleteList, users);
+              setAdmin(list, users);
             }}
             disabled={table.getSelectedRowModel().rows.length == 0}>
             Admin
           </Button>
           <Button
             onClick={async () => {
-              const deleteList = table.getSelectedRowModel().rows.map((ele) => {
+              const list = table.getSelectedRowModel().rows.map((ele) => {
                 const item = ele.original as User;
                 return item.id;
               });
-              revokeAdmin(deleteList, users);
+              revokeAdmin(list, users);
             }}
             disabled={table.getSelectedRowModel().rows.length == 0}
             variant='outline'>
@@ -128,54 +132,49 @@ export function DataTable<TData, TValue>({
         </div>
       </div>
 
-      <ScrollArea className='h-[480px] rounded-md border'>
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
+      <Table>
+        <TableHeader>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <TableRow key={headerGroup.id}>
+              {headerGroup.headers.map((header) => {
+                return (
+                  <TableHead key={header.id}>
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </TableHead>
+                );
+              })}
+            </TableRow>
+          ))}
+        </TableHeader>
+        <TableBody>
+          {table.getRowModel().rows?.length ? (
+            table.getRowModel().rows.map((row) => (
+              <TableRow
+                key={row.id}
+                data-state={row.getIsSelected() && 'selected'}>
+                {row.getVisibleCells().map((cell) => (
+                  <TableCell key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableCell>
+                ))}
               </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && 'selected'}>
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className='h-[420px] text-center'>
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </ScrollArea>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell
+                colSpan={columns.length}
+                className='h-[420px] text-center'>
+                No results.
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
     </div>
   );
 }

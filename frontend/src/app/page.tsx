@@ -1,5 +1,5 @@
 'use client';
-import { CollectrLogo } from '@/components/ui/collectrLogo';
+import CollectrLoading from '@/components/generic/CollectrLoading';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 export default function Page() {
@@ -8,8 +8,6 @@ export default function Page() {
     router.push('/home');
   }, []);
   return (
-    <div className='w-full h-screen flex justify-center items-center'>
-      <CollectrLogo className='text-4xl' />
-    </div>
+    <CollectrLoading/>
   );
 }

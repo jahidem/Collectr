@@ -56,7 +56,7 @@ import {
   CommandList,
 } from '@/components/ui/command';
 import { Badge } from '@/components/ui/badge';
-import { X } from 'lucide-react';
+import { Scroll, X } from 'lucide-react';
 
 const validationSchema = z.object({
   name: z.string().min(1, {
@@ -143,185 +143,187 @@ export default function NewItem() {
       <DialogTrigger asChild>
         <Button>Create</Button>
       </DialogTrigger>
-      <DialogContent className='sm:max-w-[560px] overflow-auto'>
-        <DialogHeader>
+      <DialogContent className='px-0'>
+        <DialogHeader className='px-6'>
           <DialogTitle>New Item</DialogTitle>
           <DialogDescription>
             Fill up info to create new item.
           </DialogDescription>
         </DialogHeader>
-        <Form {...form}>
-          <form
-            action=''
-            onSubmit={form.handleSubmit(onSubmit)}
-            className='flex-1 space-y-5'>
-            <FormField
-              name='name'
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className='text-base'>Name</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder='Item name'
-                      type='text'
-                      className='mt-3'
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name='tags'
-              render={({ field }) => (
-                <FormItem className='flex flex-col'>
-                  <FormLabel>Tags</FormLabel>
-                  <div className='flex flex-wrap gap-4'>
-                    {field.value.map((item) => (
-                      <Badge
-                        onClick={() => {
-                          form.setValue('tags', [
-                            ...field.value.filter((tag) => tag.id != item.id),
-                          ]);
-                        }}
-                        variant='secondary'
-                        className='gap-x-2 items-center hover:cursor-pointer'
-                        key={item.id}>
-                        <p>{item.name}</p>
-                        <X className='h-4 w-4 ' />
-                      </Badge>
-                    ))}
-                  </div>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant='outline'
-                          role='combobox'
-                          className={cn(
-                            'justify-between',
-                            !field.value && 'text-muted-foreground'
-                          )}>
-                          Add tag
-                          <CaretSortIcon className='ml-2 h-4 w-4 shrink-0 opacity-50' />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className='p-0'>
-                      <Command>
-                        <CommandInput
-                          placeholder='Search tags...'
-                          className='h-9'
-                        />
-                        <CommandList>
-                          <CommandEmpty>No tags found.</CommandEmpty>
-                          <CommandGroup>
-                            {tags
-                              .filter((item) => {
-                                let includ = true;
-                                field.value.forEach((ele) => {
-                                  if (ele.id == item.id) includ = false;
-                                });
-                                return includ;
-                              })
-                              .map((tag) => (
-                                <CommandItem
-                                  value={tag.name}
-                                  key={tag.id}
-                                  onSelect={() => {
-                                    form.setValue('tags', [
-                                      ...field.value,
-                                      tag,
-                                    ]);
-                                  }}>
-                                  {tag.name}
-                                </CommandItem>
-                              ))}
-                          </CommandGroup>
-                        </CommandList>
-                      </Command>
-                    </PopoverContent>
-                  </Popover>
-                  <FormDescription>
-                    This is the tag for the collection.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+        <ScrollArea className='overflow-auto h-96 lg:h-[520px]'>
+          <Form {...form}>
+            <form
+              action=''
+              onSubmit={form.handleSubmit(onSubmit)}
+              className='flex-1 space-y-5 px-6'>
+              <FormField
+                name='name'
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className='text-base'>Name</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder='Item name'
+                        type='text'
+                        className='mt-3'
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name='tags'
+                render={({ field }) => (
+                  <FormItem className='flex flex-col'>
+                    <FormLabel>Tags</FormLabel>
+                    <div className='flex flex-wrap gap-4'>
+                      {field.value.map((item) => (
+                        <Badge
+                          onClick={() => {
+                            form.setValue('tags', [
+                              ...field.value.filter((tag) => tag.id != item.id),
+                            ]);
+                          }}
+                          variant='secondary'
+                          className='gap-x-2 items-center hover:cursor-pointer'
+                          key={item.id}>
+                          <p>{item.name}</p>
+                          <X className='h-4 w-4 ' />
+                        </Badge>
+                      ))}
+                    </div>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant='outline'
+                            role='combobox'
+                            className={cn(
+                              'justify-between',
+                              !field.value && 'text-muted-foreground'
+                            )}>
+                            Add tag
+                            <CaretSortIcon className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className='p-0'>
+                        <Command>
+                          <CommandInput
+                            placeholder='Search tags...'
+                            className='h-9'
+                          />
+                          <CommandList>
+                            <CommandEmpty>No tags found.</CommandEmpty>
+                            <CommandGroup>
+                              {tags
+                                .filter((item) => {
+                                  let includ = true;
+                                  field.value.forEach((ele) => {
+                                    if (ele.id == item.id) includ = false;
+                                  });
+                                  return includ;
+                                })
+                                .map((tag) => (
+                                  <CommandItem
+                                    value={tag.name}
+                                    key={tag.id}
+                                    onSelect={() => {
+                                      form.setValue('tags', [
+                                        ...field.value,
+                                        tag,
+                                      ]);
+                                    }}>
+                                    {tag.name}
+                                  </CommandItem>
+                                ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+                    <FormDescription>
+                      This is the tag for the collection.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <Separator />
-            <FormDescription className='text-md'>
-              Custom fields:
-            </FormDescription>
-            <ScrollArea className='h-48 border-2 border-foreground-muted p-2'>
-              {collection?.itemTemplate.itemFields.map((item, index) => {
-                return (
-                  <div
-                    key={index}
-                    className='my-2'>
-                    <FormField
-                      control={form.control}
-                      name={`itemFields.${index}.fieldValue`}
-                      render={({ field }) => (
-                        <FormItem className='mx-2 mb-6'>
-                          <FormControl>
-                            {item.itemFieldType == 'BOOLEAN_FIELD' ? (
-                              <div className='flex gap-x-2 '>
-                                <Checkbox
-                                  checked={field.value}
-                                  onCheckedChange={field.onChange}
-                                />
-                                <FormLabel>{item.fieldName}</FormLabel>
-                              </div>
-                            ) : (
-                              <>
-                                <div className='flex justify-between'>
+              <Separator />
+              <FormDescription className='text-md'>
+                Custom fields:
+              </FormDescription>
+              <ScrollArea className='h-48 border-2 border-foreground-muted p-2'>
+                {collection?.itemTemplate.itemFields.map((item, index) => {
+                  return (
+                    <div
+                      key={index}
+                      className='my-2'>
+                      <FormField
+                        control={form.control}
+                        name={`itemFields.${index}.fieldValue`}
+                        render={({ field }) => (
+                          <FormItem className='mx-2 mb-6'>
+                            <FormControl>
+                              {item.itemFieldType == 'BOOLEAN_FIELD' ? (
+                                <div className='flex gap-x-2 '>
+                                  <Checkbox
+                                    checked={field.value}
+                                    onCheckedChange={field.onChange}
+                                  />
                                   <FormLabel>{item.fieldName}</FormLabel>
-                                  <p className='text-muted-foreground text-sm'>
-                                    {item.itemFieldType}
-                                  </p>
                                 </div>
+                              ) : (
+                                <>
+                                  <div className='flex justify-between'>
+                                    <FormLabel>{item.fieldName}</FormLabel>
+                                    <p className='text-muted-foreground text-sm'>
+                                      {item.itemFieldType}
+                                    </p>
+                                  </div>
 
-                                <Input
-                                  {...field}
-                                  type={
-                                    item.itemFieldType == 'INTEGER_FIELD'
-                                      ? 'number'
-                                      : 'text'
-                                  }
-                                />
-                              </>
-                            )}
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                );
-              })}
-            </ScrollArea>
+                                  <Input
+                                    {...field}
+                                    type={
+                                      item.itemFieldType == 'INTEGER_FIELD'
+                                        ? 'number'
+                                        : 'text'
+                                    }
+                                  />
+                                </>
+                              )}
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  );
+                })}
+              </ScrollArea>
 
-            <div className='flex justify-between'>
-              <DialogClose asChild>
+              <div className='flex justify-between'>
+                <DialogClose asChild>
+                  <Button
+                    variant='secondary'
+                    onClick={() => form.reset(defaultValues)}>
+                    Cancel
+                  </Button>
+                </DialogClose>
                 <Button
-                  variant='secondary'
-                  onClick={() => form.reset(defaultValues)}>
-                  Cancel
+                  type='submit'
+                  disabled={status === Status.PENDING}>
+                  {status === Status.IDLE ? 'Submit' : <LoadingSpinner />}
                 </Button>
-              </DialogClose>
-              <Button
-                type='submit'
-                disabled={status === Status.PENDING}>
-                {status === Status.IDLE ? 'Submit' : <LoadingSpinner />}
-              </Button>
-            </div>
-          </form>
-        </Form>
+              </div>
+            </form>
+          </Form>
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );

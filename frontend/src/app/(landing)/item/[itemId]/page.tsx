@@ -13,7 +13,6 @@ import { BiLike, BiSolidLike } from 'react-icons/bi';
 
 import { ModelContext } from '@/providers/modelProvider';
 import { ModelContextType } from '@/types/model';
-import { CollectrLogo } from '@/components/ui/collectrLogo';
 import { useParams } from 'next/navigation';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
@@ -24,6 +23,7 @@ import { Status } from '@/types/state';
 import { stat } from 'fs';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import LoadingCollectr from '@/components/spinner/LoadingCollectr';
 export default function Collection() {
   const [comment, setComment] = useState<string>('');
   const [status, setStatus] = useState<Status>(Status.IDLE);
@@ -49,14 +49,19 @@ export default function Collection() {
   }, [itemId]);
 
   return item ? (
-    <div className='flex flex-col gap-2 m-12'>
-      <div className='flex justify-between'>
+    <div className='flex flex-col gap-2 mt-12'>
+      <div className='flex justify-between px-12'>
         <div className='flex gap-12 items-center'>
-          <div className='flex-1 space-y-6'>
+          <div className='flex flex-col space-y-6'>
             <div className='flex gap-x-12 items-center'>
               <div>
                 <p className='font-mono text-primary'>#item</p>
                 <h4 className='text-xl font-medium'>{item?.name}</h4>
+                <Link
+                  className='underline text-muted-foreground text-sm'
+                  href={`/profile/${item.user.id}`}>
+                  Owner
+                </Link>
               </div>
               {authUser && (
                 <div>
@@ -95,8 +100,18 @@ export default function Collection() {
                   </p>
                 </div>
               )}
+              {!authUser && (
+                <div>
+                  <BiLike className='h-10 w-10 cursor-pointer' />
+                  <p>
+                    {item.likes.length +
+                      ' like' +
+                      (item.likes.length > 1 ? 's' : '')}
+                  </p>
+                </div>
+              )}
             </div>
-            <div className='flex flex-wrap gap-2 w-96'>
+            <div className='flex flex-wrap gap-2 max-w-96'>
               {item?.itemTags.map((tag) => (
                 <Badge key={tag.id}>{tag.name}</Badge>
               ))}
@@ -166,8 +181,6 @@ export default function Collection() {
       </div>
     </div>
   ) : (
-    <div className='w-full h-full flex justify-center items-center'>
-      <CollectrLogo className='text-4xl' />
-    </div>
+    <LoadingCollectr />
   );
 }

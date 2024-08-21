@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Collection } from '@/types/collection';
 import { ColumnDef } from '@tanstack/react-table';
+import MDEditor from '@uiw/react-md-editor';
 import { ArrowUpDown, ImageIcon } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -61,7 +62,7 @@ export const columns: ColumnDef<Collection>[] = [
       <Link
         className='cursor-pointer hover:underline'
         href={`/collection/${row.original.id}`}>
-        {row.original.id}
+        {row.original.id.substring(0, 13)}
       </Link>
     ),
   },
@@ -90,5 +91,11 @@ export const columns: ColumnDef<Collection>[] = [
         </Button>
       );
     },
+    cell: ({ row }) => (
+      <MDEditor.Markdown
+        source={row.original.description}
+        skipHtml={true}
+      />
+    ),
   },
 ];
