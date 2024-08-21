@@ -51,7 +51,7 @@ export function DataTable<TData, TValue>({
   });
   const { deleteUsers, setAdmin, revokeAdmin, blockUsers, unblockUsers } =
     useContext(ModelContext) as ModelContextType;
-  const { authUser } = useContext(AuthContext) as authContextType;
+  const { authUser, setAuth } = useContext(AuthContext) as authContextType;
   return (
     <div>
       {/* <h4 className='text-xl font-medium my-6'>User List</h4> */}
@@ -61,38 +61,42 @@ export function DataTable<TData, TValue>({
           <p className='text-md font-semibold'>Account:</p>
           <Button
             onClick={async () => {
-              const deleteList = table.getSelectedRowModel().rows.map((ele) => {
+              const list = table.getSelectedRowModel().rows.map((ele) => {
                 const item = ele.original as User;
                 return item.id;
               });
-              unblockUsers(deleteList, users);
+              unblockUsers(list, users);
             }}
             disabled={table.getSelectedRowModel().rows.length == 0}>
-            <FaLockOpen className='mr-2'/>
+            <FaLockOpen className='mr-2' />
             Unblock
           </Button>
           <Button
             onClick={async () => {
-              const deleteList = table.getSelectedRowModel().rows.map((ele) => {
+              const list = table.getSelectedRowModel().rows.map((ele) => {
                 const item = ele.original as User;
                 return item.id;
               });
-              blockUsers(deleteList, users);
+              blockUsers(list, users);
             }}
             variant='outline'
             disabled={table.getSelectedRowModel().rows.length == 0}>
-            <FaLock  />
+            <FaLock />
           </Button>
 
           <div className='w-2'></div>
           <Button
             disabled={table.getSelectedRowModel().rows.length == 0}
             onClick={async () => {
-              const deleteList = table.getSelectedRowModel().rows.map((ele) => {
+              const list = table.getSelectedRowModel().rows.map((ele) => {
                 const item = ele.original as User;
                 return item.id;
               });
-              deleteUsers(deleteList, users);
+              deleteUsers(list, users);
+              if (list.filter((id) => id == authUser?.id).length) {
+                setAuth(null);
+                route.push('/home');
+              }
             }}
             variant='destructive'>
             <FaTrashCan className='mr-2' />
@@ -104,22 +108,22 @@ export function DataTable<TData, TValue>({
 
           <Button
             onClick={async () => {
-              const deleteList = table.getSelectedRowModel().rows.map((ele) => {
+              const list = table.getSelectedRowModel().rows.map((ele) => {
                 const item = ele.original as User;
                 return item.id;
               });
-              setAdmin(deleteList, users);
+              setAdmin(list, users);
             }}
             disabled={table.getSelectedRowModel().rows.length == 0}>
             Admin
           </Button>
           <Button
             onClick={async () => {
-              const deleteList = table.getSelectedRowModel().rows.map((ele) => {
+              const list = table.getSelectedRowModel().rows.map((ele) => {
                 const item = ele.original as User;
                 return item.id;
               });
-              revokeAdmin(deleteList, users);
+              revokeAdmin(list, users);
             }}
             disabled={table.getSelectedRowModel().rows.length == 0}
             variant='outline'>

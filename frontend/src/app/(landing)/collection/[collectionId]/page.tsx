@@ -14,11 +14,11 @@ import { DataTable } from './_collection/data-table';
 import { columns } from './_collection/columns';
 import { ModelContext } from '@/providers/modelProvider';
 import { ModelContextType } from '@/types/model';
-import { CollectrLogo } from '@/components/ui/collectrLogo';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
+import LoadingCollectr from '@/components/spinner/LoadingCollectr';
 export default function Collection() {
   const { items, collection, fetchCollection, fetchItems } = useContext(
     ModelContext
@@ -34,8 +34,8 @@ export default function Collection() {
   }, [collectionId]);
 
   return collectionId ? (
-    <div className='flex flex-col gap-2 m-12'>
-      <div className='flex gap-12 items-center'>
+    <div className='flex flex-col gap-2 mt-12'>
+      <div className='flex gap-12 items-center px-12'>
         <div
           style={{
             position: 'relative',
@@ -60,13 +60,14 @@ export default function Collection() {
             <p className='font-mono text-primary'>#collection</p>
             <h4 className='text-xl font-medium'>{collection?.title}</h4>
           </div>
-          <p className='text-lg text-muted-foreground'>
-            {collection?.description}
-          </p>
+
           <Badge>{collection?.catagory?.name}</Badge>
         </div>
       </div>
-      <Separator className='my-4' />
+      <p className='text-lg text-muted-foreground m-4'>
+        {collection?.description}
+      </p>
+      <Separator className='mb-4' />
       <div className='container mx-auto mb-12'>
         <DataTable
           columns={
@@ -81,8 +82,6 @@ export default function Collection() {
       </div>
     </div>
   ) : (
-    <div className='w-full h-full flex justify-center items-center'>
-      <CollectrLogo className='text-4xl' />
-    </div>
+    <LoadingCollectr />
   );
 }

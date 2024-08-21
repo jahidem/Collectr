@@ -61,7 +61,7 @@ export const columns: ColumnDef<Collection>[] = [
       <Link
         className='cursor-pointer hover:underline'
         href={`/collection/${row.original.id}`}>
-        {row.original.id}
+        {row.original.id.substring(0,13)}
       </Link>
     ),
   },

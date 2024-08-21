@@ -11,6 +11,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useContext } from 'react';
 import { AuthContext } from '@/providers/authUserContext';
 import { authContextType } from '@/types/auth';
+import { HeaderAction } from './HeaderAction';
 
 const linkItems = [
   { name: 'Home', href: '/home' },
@@ -70,17 +71,29 @@ export default function Header() {
               className='flex items-center gap-2 text-lg font-semibold md:text-base'>
               <CollectrLogo className='text-xl' />
             </Link>
-            {linkItems.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={cn(
-                  'text-muted-foreground transition-colors hover:text-foreground',
-                  item.href == pathname ? 'text-foreground' : ''
-                )}>
-                {item.name}
-              </Link>
-            ))}
+            {linkItems
+              .filter((item) => {
+                if (
+                  !authUser &&
+                  (item.name == 'Profile' || item.name == 'Admin')
+                )
+                  return false;
+                if (authUser?.role != 'ADMIN' && item.name == 'Admin')
+                  return false;
+                return true;
+              })
+              .map((item) => (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className={cn(
+                    'text-muted-foreground transition-colors hover:text-foreground',
+                    item.href == pathname ? 'text-foreground' : ''
+                  )}>
+                  {item.name}
+                </Link>
+              ))}
+            <HeaderAction />
           </nav>
         </SheetContent>
       </Sheet>
@@ -105,10 +118,10 @@ export default function Header() {
             />
           </div>
         </div>
-        <ModeToggle />
+        <ModeToggle className={undefined} />
         {authUser ? (
           <LogOut
-            className='h-5 w-5 text-muted-foreground hover:text-foreground mx-4'
+            className='h-5 w-5 text-muted-foreground hover:text-foreground mx-4 max-md:hidden'
             cursor='pointer'
             onClick={() => {
               setAuth(null);
@@ -116,7 +129,9 @@ export default function Header() {
             }}
           />
         ) : (
-          <Link href='/auth/sign-in'>
+          <Link
+            href='/auth/sign-in'
+            className='max-md:hidden'>
             <Button>Sign in / sign up</Button>
           </Link>
         )}

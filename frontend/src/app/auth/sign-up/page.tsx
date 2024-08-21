@@ -24,7 +24,7 @@ import { useRouter } from 'next/navigation';
 import collectrAPI from '@/api/CollectrAPI';
 
 const FormSchema = z.object({
-  firstname: z.string() .min(1, {
+  firstname: z.string().min(1, {
     message: 'Provide a firstname.',
   }),
   lastname: z.string().min(1, {
@@ -53,16 +53,19 @@ export default function SignUp() {
 
   async function onSubmit(values: z.infer<typeof FormSchema>) {
     setStatus(Status.PENDING);
+    collectrAPI
+      .post(register, JSON.stringify(values))
+      .then((res) => {
+        push('/auth/sign-in');
+      })
+      .catch((err) => {
+        form.setError('email', {
+          type: 'custom',
+          message: 'Registered Email, You can sign in.',
+        });
+      });
 
-    try {
-      const response = await collectrAPI.post(register, JSON.stringify(values));
-      setStatus(response.status === 201 ? Status.SUCCESS : Status.ERROR);
-    } catch (err) {
-      setStatus(Status.ERROR);
-    } finally {
-      setStatus(Status.IDLE);
-      push('/auth/sign-in');
-    }
+    setStatus(Status.IDLE);
   }
 
   return (

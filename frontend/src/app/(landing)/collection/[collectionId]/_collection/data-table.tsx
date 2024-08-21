@@ -105,11 +105,6 @@ export function DataTable<TData, TValue>({
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
-                  // className='cursor-pointer'
-                  // onClick={() => {
-                  //   const collection = row.original as Collection;
-                  //   route.push(`/collection/${collection.id}`);
-                  // }}
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}>
                   {row.getVisibleCells().map((cell) => (

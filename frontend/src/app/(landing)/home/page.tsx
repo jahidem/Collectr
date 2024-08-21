@@ -36,7 +36,7 @@ export default function Home() {
     getTop5();
   }, []);
   return (
-    <div className='flex flex-col gap-2 m-12'>
+    <div className='flex flex-col gap-2 mt-6'>
       <div className='container mx-auto mb-12'>
         <DataTable
           data={latestItems}

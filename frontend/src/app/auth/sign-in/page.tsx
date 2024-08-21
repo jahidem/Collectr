@@ -55,21 +55,19 @@ export default function SignIn() {
 
     try {
       const response = await collectrAPI.post(login, JSON.stringify(values));
-      console.log(response);
-
       setStatus(response.status == 200 ? Status.SUCCESS : Status.ERROR);
       const data = response.data;
       setAuth(data.token);
     } catch (err) {
       setStatus(Status.ERROR);
     } finally {
-      setStatus(Status.IDLE);
       if (status == Status.SUCCESS) replace('/profile');
       else
         form.setError('email', {
           type: 'custom',
-          message: 'Unregistred / Blocked Email',
+          message: 'Invalid / Blocked Credentials',
         });
+      setStatus(Status.IDLE);
     }
   }
 

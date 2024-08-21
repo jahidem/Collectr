@@ -3,15 +3,15 @@ import { useContext, useEffect } from 'react';
 import { users as usersApi } from '@/assets/constants/api';
 import { ModelContext } from '@/providers/modelProvider';
 import { ModelContextType } from '@/types/model';
-import { CollectrLogo } from '@/components/ui/collectrLogo';
-import { useParams, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { DataTable } from './_admin/data-table';
 import { columns } from './_admin/columns';
 import { AuthContext } from '@/providers/authUserContext';
 import { authContextType } from '@/types/auth';
+import LoadingCollectr from '@/components/spinner/LoadingCollectr';
 export default function Admin() {
   const { fetchUsers, users } = useContext(ModelContext) as ModelContextType;
-  const { authUser, fetchAuthUser } = useContext(
+  const { authUser, fetchAuthUser, setAuth } = useContext(
     AuthContext
   ) as authContextType;
   const router = useRouter();
@@ -28,11 +28,14 @@ export default function Admin() {
     };
     if (authUser && users) {
       const currUsers = users.filter((item) => item.id == authUser.id);
-      if (currUsers.length && currUsers[0].role != 'ADMIN') {
+      if(currUsers.length && !currUsers[0].enabled) {
+        setAuth(null);
+        router.replace('/home');
+      } else if (currUsers.length && currUsers[0].role != 'ADMIN') {
         checkAdmin();
       }
     }
-  }, [authUser, fetchAuthUser, router, users]);
+  }, [authUser, users]);
 
   return users ? (
     <div className='container mx-auto'>
@@ -42,8 +45,6 @@ export default function Admin() {
       />
     </div>
   ) : (
-    <div className='w-full h-full flex justify-center items-center'>
-      <CollectrLogo className='text-4xl' />
-    </div>
+    <LoadingCollectr />
   );
 }

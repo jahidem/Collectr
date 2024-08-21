@@ -77,36 +77,35 @@ const ModelProvider: FC<{ children: ReactNode }> = ({ children }) => {
     collectionIds: string[],
     collectionsApi: string
   ) => {
+    collectionIds.forEach(async (id) => {
+      await collectrAPI.delete(`${collectionsApi}/collection/${id}`);
+    });
     collectionIds.forEach((id) =>
       setCollections((state) =>
         state.filter((collection) => collection.id != id)
       )
     );
-
-    collectionIds.forEach(async (id) => {
-      await collectrAPI.delete(`${collectionsApi}/collection/${id}`);
-    });
   };
 
   const deleteItems = async (itemIds: string[], itemsApi: string) => {
-    itemIds.forEach((id) =>
-      setItems((state) => state.filter((item) => item.id != id))
-    );
-
     itemIds.forEach(async (id) => {
       await collectrAPI.delete(`${itemsApi}/item/${id}`);
     });
+    itemIds.forEach((id) =>
+      setItems((state) => state.filter((item) => item.id != id))
+    );
   };
 
   const deleteUsers = async (userIds: string[], usersApi: string) => {
+    await collectrAPI.post(`${usersApi}/user/delete`, JSON.stringify(userIds));
     userIds.forEach((id) =>
       setUsers((state) => state.filter((item) => item.id != id))
     );
-
-    await collectrAPI.post(`${usersApi}/user/delete`, JSON.stringify(userIds));
   };
 
   const setAdmin = async (userIds: string[], usersApi: string) => {
+    await collectrAPI.post(`${usersApi}/role/admin`, JSON.stringify(userIds));
+
     userIds.forEach((id) =>
       setUsers((state) =>
         state.map((item) => {
@@ -115,11 +114,11 @@ const ModelProvider: FC<{ children: ReactNode }> = ({ children }) => {
         })
       )
     );
-
-    await collectrAPI.post(`${usersApi}/role/admin`, JSON.stringify(userIds));
   };
 
   const revokeAdmin = async (userIds: string[], usersApi: string) => {
+    await collectrAPI.post(`${usersApi}/role/user`, JSON.stringify(userIds));
+
     userIds.forEach((id) =>
       setUsers((state) =>
         state.map((item) => {
@@ -128,11 +127,11 @@ const ModelProvider: FC<{ children: ReactNode }> = ({ children }) => {
         })
       )
     );
-
-    await collectrAPI.post(`${usersApi}/role/user`, JSON.stringify(userIds));
   };
 
   const blockUsers = async (userIds: string[], usersApi: string) => {
+    await collectrAPI.post(`${usersApi}/user/block`, JSON.stringify(userIds));
+
     userIds.forEach((id) =>
       setUsers((state) =>
         state.map((item) => {
@@ -141,11 +140,11 @@ const ModelProvider: FC<{ children: ReactNode }> = ({ children }) => {
         })
       )
     );
-
-    await collectrAPI.post(`${usersApi}/user/block`, JSON.stringify(userIds));
   };
 
   const unblockUsers = async (userIds: string[], usersApi: string) => {
+    await collectrAPI.post(`${usersApi}/user/unblock`, JSON.stringify(userIds));
+
     userIds.forEach((id) =>
       setUsers((state) =>
         state.map((item) => {
@@ -154,7 +153,6 @@ const ModelProvider: FC<{ children: ReactNode }> = ({ children }) => {
         })
       )
     );
-    await collectrAPI.post(`${usersApi}/user/unblock`, JSON.stringify(userIds));
   };
 
   useEffect(() => {

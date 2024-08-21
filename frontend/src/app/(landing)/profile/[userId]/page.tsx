@@ -10,7 +10,6 @@ import { DataTable } from './_profile/data-table';
 import { columns } from './_profile/columns';
 import { ModelContext } from '@/providers/modelProvider';
 import { ModelContextType } from '@/types/model';
-import { CollectrLogo } from '@/components/ui/collectrLogo';
 import { useParams } from 'next/navigation';
 
 export default function Profile() {
@@ -28,8 +27,8 @@ export default function Profile() {
   return (
     userId &&
     user && (
-      <div className='flex flex-col gap-2 m-12'>
-        <div className='flex gap-4 items-center'>
+      <div className='flex flex-col gap-2 mt-12'>
+        <div className='flex gap-4 items-center px-12'>
           <Avatar className='h-16 w-16'>
             <AvatarFallback className='text-xl'>
               <User />
