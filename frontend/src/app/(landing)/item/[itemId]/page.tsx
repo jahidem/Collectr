@@ -59,7 +59,7 @@ export default function Collection() {
                 <h4 className='text-xl font-medium'>{item?.name}</h4>
                 <Link
                   className='underline text-muted-foreground text-sm'
-                  href={`/profile/${item.user.id}`}>
+                  href={`/profile/${item?.user?.id}`}>
                   Owner
                 </Link>
               </div>
