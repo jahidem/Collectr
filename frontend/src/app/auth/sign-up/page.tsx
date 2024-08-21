@@ -70,10 +70,10 @@ export default function SignUp() {
 
   return (
     <div className='h-screen '>
-      <div className='h-screen w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]'>
+      <div className='h-screen w-full lg:grid lg:grid-cols-2'>
         <div>
           <CollectrLogo />
-          <div className='mx-24 mt-24 max-w-lg'>
+          <div className='mx-6 lg:ml-12 mt-12 max-w-lg'>
             <div>
               <h1 className='text-2xl font-medium mb-12'>
                 Create account for Collectr
@@ -164,12 +164,12 @@ export default function SignUp() {
                   <Button
                     type='submit'
                     disabled={status === Status.PENDING}
-                    className='w-32 h-12 text-lg mt-10'>
+                    className='lg:w-32 lg:h-12 lg:text-lg mt-10'>
                     {status === Status.IDLE ? 'Sign up' : <LoadingSpinner />}
                   </Button>
                 </form>
               </Form>
-              <div className='mt-6 text-md'>
+              <div className='my-6 text-md'>
                 Already have an account?
                 <Link
                   href={`/auth/sign-in`}
@@ -180,12 +180,13 @@ export default function SignUp() {
             </div>
           </div>
         </div>
-
-        <Image
-          src={collections}
-          alt='Image'
-          className='h-screen object-fit brightness-150 saturate-150'
-        />
+        <div className='hidden lg:block h-full overflow-hidden'>
+          <Image
+            src={collections}
+            alt='Image'
+            className='object-cover brightness-150 saturate-150'
+          />
+        </div>
       </div>
     </div>
   );

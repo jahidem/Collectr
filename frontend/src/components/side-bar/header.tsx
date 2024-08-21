@@ -121,7 +121,7 @@ export default function Header() {
         <ModeToggle className={undefined} />
         {authUser ? (
           <LogOut
-            className='h-5 w-5 text-muted-foreground hover:text-foreground mx-4 max-md:hidden'
+            className='h-5 w-5 text-muted-foreground hover:text-foreground ml-4 max-md:hidden'
             cursor='pointer'
             onClick={() => {
               setAuth(null);

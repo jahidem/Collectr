@@ -111,31 +111,38 @@ export default function Search() {
         ))}
       </div>
       {paging && (
-        <Pagination className='my-12 '>
+        <Pagination className='mt-12 pb-12'>
           <PaginationContent>
             {!paging.first && (
               <PaginationItem>
                 <PaginationPrevious
                   href={`/search?text=${text}&page=${
-                    paging.pageNumber - 1
+                    paging.pageNumber - 2
                   }&size=${paging.pageSize}`}
                 />
               </PaginationItem>
             )}
 
-            {!paging.first && paging.pageNumber - 1 != 1 && (
+            {!paging.first && paging.pageNumber > 2 && (
               <PaginationItem>
                 <PaginationLink
-                  href={`/search?text=${text}&page=${paging.totalPages}&size=${paging.pageSize}`}>
-                  {paging.totalPages}
+                  href={`/search?text=${text}&page=${0}&size=${
+                    paging.pageSize
+                  }`}>
+                  1
                 </PaginationLink>
+              </PaginationItem>
+            )}
+            {!paging.first && (
+              <PaginationItem>
+                <PaginationEllipsis />
               </PaginationItem>
             )}
             {!paging.first && (
               <PaginationItem>
                 <PaginationLink
                   href={`/search?text=${text}&page=${
-                    paging.pageNumber - 1
+                    paging.pageNumber - 2
                   }&size=${paging.pageSize}`}>
                   {paging.pageNumber - 1}
                 </PaginationLink>
@@ -143,7 +150,9 @@ export default function Search() {
             )}
             <PaginationItem>
               <PaginationLink
-                href={`/search?text=${text}&page=${paging.pageNumber}&size=${paging.pageSize}`}
+                href={`/search?text=${text}&page=${
+                  paging.pageNumber - 1
+                }&size=${paging.pageSize}`}
                 isActive>
                 {paging.pageNumber}
               </PaginationLink>
@@ -151,9 +160,7 @@ export default function Search() {
             {!paging.last && (
               <PaginationItem>
                 <PaginationLink
-                  href={`/search?text=${text}&page=${
-                    paging.pageNumber + 1
-                  }&size=${paging.pageSize}`}>
+                  href={`/search?text=${text}&page=${paging.pageNumber}&size=${paging.pageSize}`}>
                   {paging.pageNumber + 1}
                 </PaginationLink>
               </PaginationItem>
@@ -163,10 +170,10 @@ export default function Search() {
                 <PaginationEllipsis />
               </PaginationItem>
             )}
-            {!paging.last && paging.pageNumber + 1 != paging.totalPages && (
+            {!paging.last && paging.pageNumber+1 < paging.totalPages && (
               <PaginationItem>
                 <PaginationLink
-                  href={`/search?text=${text}&page=${paging.totalPages}&size=${paging.pageSize}`}>
+                  href={`/search?text=${text}&page=${paging.totalPages-1}&size=${paging.pageSize}`}>
                   {paging.totalPages}
                 </PaginationLink>
               </PaginationItem>
@@ -174,9 +181,7 @@ export default function Search() {
             {!paging.last && (
               <PaginationItem>
                 <PaginationNext
-                  href={`/search?text=${text}&page=${
-                    paging.pageNumber + 1
-                  }&size=${paging.pageSize}`}
+                  href={`/search?text=${text}&page=${paging.pageNumber}&size=${paging.pageSize}`}
                 />
               </PaginationItem>
             )}

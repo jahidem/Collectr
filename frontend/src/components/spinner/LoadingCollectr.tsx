@@ -8,7 +8,7 @@ type Props = {
 const LoadingCollectr: React.FC<Props> = ({ className }) => {
   return (
     <div className='w-full h-5/6 flex justify-center items-center'>
-      <CollectrLogo className='text-4xl' />
+      <CollectrLogo className='text-2xl lg:text-4xl' />
     </div>
   );
 };

@@ -15,22 +15,21 @@ export function HeaderAction() {
     AuthContext
   ) as authContextType;
 
-  return (
-    <div className='flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4'>
-      {authUser ? (
-        <LogOut
-          className='h-5 w-5 text-muted-foreground hover:text-foreground mx-4'
-          cursor='pointer'
-          onClick={() => {
-            setAuth(null);
-            replace('/home');
-          }}
-        />
-      ) : (
-        <Link href='/auth/sign-in'>
-          <Button>Sign in / sign up</Button>
-        </Link>
-      )}
-    </div>
+  return authUser ? (
+    <Button variant='secondary' className='mt-4'>
+      Logout
+      <LogOut
+        className='h-5 w-5 ml-2'
+        cursor='pointer'
+        onClick={() => {
+          setAuth(null);
+          replace('/home');
+        }}
+      />
+    </Button>
+  ) : (
+    <Link href='/auth/sign-in'>
+      <Button>Sign in / sign up</Button>
+    </Link>
   );
 }
